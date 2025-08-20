@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIPMAS 1.0</title>
+  <style>
+    body {
+      font-family: Poppins, sans-serif;
+      background-color: #2b4641;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: #1e3632;
+      padding: 30px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .login-container img {
+      width: 80px;
+      height: auto;
+    }
+    .login-container h1 {
+      margin: 10px 0 0px;
+      font-size: 35px;
+    }
+    .login-container p {
+      margin: 0 0;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-top: 12px;
+      text-align: center;
+    }
+    .form-group label {
+      display: block;
+      padding-left: 30px;
+      text-align: left;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 80%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 0 auto;
+      display: block;
+    }
+    button {
+      width: 80%;
+      padding: 10px;
+      background: #e3cd00;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background: #0055aa;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="../img/polri.png" alt="logo" />
+    <h1>SIPMAS POLSEK</h1>
+    <p>SISTEM INFORMASI PELAYANAN MASYARAKAT</p>
+    <div class="form-group">
+      <label for="username">NRP</label>
+      <input type="text" id="username" placeholder="Masukkan NRP" />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Masukkan password" />
+    </div>
+    <button onclick="login()">LOGIN</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+  async function login() {
+    const nrp = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const res = await window.electronAPI.login(nrp, password);
+    const errorMsg = document.getElementById("errorMsg");
+    if (res.success) {
+      window.location.href = "index.html";
+    } else {
+      errorMsg.innerText = "NRP atau password salah!";
+    }
+  }
+
+  // Tangkap Enter di input NRP dan Password
+  document.getElementById("username").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      login();
+    }
+  });
+
+  document.getElementById("password").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      login();
+    }
+  });
+</script>
+
+</body>
+</html>

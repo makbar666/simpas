@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^11.10.0",
+    "electron": "^36.3.1",
+    "sqlite3": "^5.1.7"
+  },
+  "name": "sipmas",
+  "version": "1.0.0",
+  "main": "./js/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Satria Dwi Oktavian | Polsek Arahan 2025",
+  "license": "ISC",
+  "description": "Sistem Informasi Pelayanan Masyarakat (SIPMAS) yang ditekankan untuk Pelayanan di Kantor Kepolisian Sektor (POLSEK)."
+}

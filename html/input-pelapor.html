@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIPMAS POLSEK</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+    <header>
+        <img src="../img/polri.png" alt="Logo" class="logo" />
+        <h1>SIPMAS POLSEK</h1>
+        <div class="lines"></div>
+    </header>
+    <main>
+        <h2>FORM SURAT KEHILANGAN</h2>
+
+        <div class="nosurat">
+            <label for="nosurat">No. Surat</label>
+            <input type="number" id="nosurat" name="nosurat" placeholder="Nomor" />
+        </div>
+
+        <section class="data-pelapor-section">
+            <h4 class="main-header">DATA PELAPOR</h4>
+            <form class="form-grid">
+                <div>
+                    <label for="nama">1. Nama</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" />
+                </div>
+
+                <div>
+                    <label for="ttlp">2. Tempat, Tanggal Lahir</label>
+                    <input type="text" id="ttlp" name="ttlp" placeholder="Masukkan tempat, tanggal lahir" />
+                </div>
+
+                <div>
+                    <label for="agama">3. Agama</label>
+                    <input
+                        type="text"
+                        id="agama"
+                        name="agama"
+                        placeholder="Masukkan agama"
+                        list="list-agama"
+                    />
+                    <datalist id="list-agama">
+                        <option value="Islam" />
+                        <option value="Kristen" />
+                        <option value="Katolik" />
+                        <option value="Hindu" />
+                        <option value="Buddha" />
+                        <option value="Konghucu" />
+                    </datalist>
+                </div>
+
+                <div>
+                    <label for="pekerjaan">4. Pekerjaan</label>
+                    <input
+                        type="text"
+                        id="pekerjaan"
+                        name="pekerjaan"
+                        placeholder="Masukkan pekerjaan"
+                        list="list-pekerjaan"
+                    />
+                    <datalist id="list-pekerjaan">
+                        <option value="Belum/Tidak Bekerja" />
+                        <option value="Mengurus Rumah Tangga" />
+                        <option value="Pelajar/Mahasiswa" />
+                        <option value="Pensiunan" />
+                        <option value="Pegawai Negeri Sipil" />
+                        <option value="Tentara Nasional Indonesia (TNI)" />
+                        <option value="Kepolisian RI" />
+                        <option value="Perdagangan" />
+                        <option value="Petani/Pekebun" />
+                        <option value="Peternak" />
+                        <option value="Nelayan/Perikanan" />
+                        <option value="Industri" />
+                        <option value="Konstruksi" />
+                        <option value="Transportasi" />
+                        <option value="Karyawan Swasta" />
+                        <option value="Karyawan BUMN" />
+                        <option value="Karyawan BUMD" />
+                        <option value="Karyawan Honorer" />
+                        <option value="Buruh Harian Lepas" />
+                        <option value="Buruh Tani/Perkebunan" />
+                        <option value="Buruh Nelayan/ Perikanan" />
+                        <option value="Buruh Peternakan" />
+                        <option value="Pembantu Rumah Tangga" />
+                        <option value="Tukang Cukur" />
+                        <option value="Tukang Listrik" />
+                        <option value="Tukang Batu" />
+                        <option value="Tukang Kayu" />
+                        <option value="Tukang Sol Sepatu" />
+                        <option value="Tukang Las/Pandai Besi" />
+                        <option value="Tukang Jahit" />
+                        <option value="Tukang Gigi" />
+                        <option value="Penata Rias" />
+                        <option value="Penata Busana" />
+                        <option value="Penata Rambut" />
+                        <option value="Mekanik" />
+                        <option value="Seniman" />
+                        <option value="Tabib" />
+                        <option value="Paraji" />
+                        <option value="Perancang Busana" />
+                        <option value="Penerjemah" />
+                        <option value="Imam Masjid" />
+                        <option value="Pendeta" />
+                        <option value="Pastor" />
+                        <option value="Wartawan" />
+                        <option value="Ustadz/Mubaligh" />
+                        <option value="Juru Masak" />
+                        <option value="Promotor Acara" />
+                        <option value="Anggota DPR-RI" />
+                        <option value="Anggota DPD" />
+                        <option value="Anggota BPK" />
+                        <option value="Presiden" />
+                        <option value="Wakil Presiden" />
+                        <option value="Anggota Mahkamah Konstitusi" />
+                        <option value="Anggota Kabinet/Kementerian" />
+                        <option value="Duta Besar" />
+                        <option value="Gubernur" />
+                        <option value="Wakil Gubernur" />
+                        <option value="Bupati" />
+                        <option value="Wakil Bupati" />
+                        <option value="Walikota" />
+                        <option value="Wakil Walikota" />
+                        <option value="Anggota DPRD Provinsi" />
+                        <option value="Anggota DPRD Kabupaten/Kota" />
+                        <option value="Dosen" />
+                        <option value="Guru" />
+                        <option value="Pilot" />
+                        <option value="Pengacara" />
+                        <option value="Notaris" />
+                        <option value="Arsitek" />
+                        <option value="Akuntan" />
+                        <option value="Konsultan" />
+                        <option value="Dokter" />
+                        <option value="Bidan" />
+                        <option value="Perawat" />
+                        <option value="Apoteker" />
+                        <option value="Psikiater/Psikolog" />
+                        <option value="Penyiar Televisi" />
+                        <option value="Penyiar Radio" />
+                        <option value="Pelaut" />
+                        <option value="Peneliti" />
+                        <option value="Sopir" />
+                        <option value="Pialang" />
+                        <option value="Paranormal" />
+                        <option value="Pedagang" />
+                        <option value="Perangkat Desa" />
+                        <option value="Kepala Desa" />
+                        <option value="Biarawati" />
+                        <option value="Wiraswasta" />
+                    </datalist>
+                </div>
+
+                <div>
+                    <label for="alamat">5. Alamat</label>
+                    <input type="text" id="alamat" name="alamat" placeholder="Masukkan alamat" /><br />
+                    <input type="text" id="alamat2" name="alamat2" placeholder="Masukkan alamat" />
+                </div>
+
+                <div>
+                    <label for="nik">6. Nomor Induk Kependudukan</label>
+                    <input
+                        type="number"
+                        id="nik"
+                        name="nik"
+                        placeholder="Masukkan Nomor Induk Kependudukan"
+                    />
+                </div>
+            </form>
+        </section>
+
+        <div class="actions-pelapor">
+            <button class="tambah" onclick="window.location.href='form-kehilangan.html'">SELANJUTNYA</button>
+        </div>
+
+        <div class="actions-kembali">
+            <button class="logout" onclick="window.location.href='index.html'">KEMBALI</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>SIPMAS POLSEK 1.0</p>
+    </footer>
+    <!-- Tambahkan di bagian akhir body, sebelum </body> -->
+<script>
+  document.querySelector('.tambah').addEventListener('click', () => {
+    const dataPelapor = {
+      nosurat: document.getElementById('nosurat').value,
+      nama: document.getElementById('nama').value,
+      ttlp: document.getElementById('ttlp').value,
+      agama: document.getElementById('agama').value,
+      pekerjaan: document.getElementById('pekerjaan').value,
+      alamat1: document.getElementById('alamat').value,
+      alamat2: document.getElementById('alamat2').value,
+      nik: document.getElementById('nik').value
+    };
+    localStorage.setItem('dataPelapor', JSON.stringify(dataPelapor));
+  });
+</script>
+</body>
+</html>
