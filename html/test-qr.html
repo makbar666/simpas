@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <style>
+        body {
+            font-family: 'Tahoma', sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #qrResult {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #qrCode {
+            margin: 20px 0;
+        }
+
+        .test-link {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 12px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Test QR Code Generator</h2>
+        <p>Form ini untuk menguji QR code yang akan dihasilkan di surat kehilangan.</p>
+
+        <div class="form-group">
+            <label>Nomor Surat:</label>
+            <input type="text" id="nomor" value="STPLKB/C/001/IX/2024/POLSEK/SPKT">
+        </div>
+
+        <div class="form-group">
+            <label>Nama Pelapor:</label>
+            <input type="text" id="nama" value="John Doe">
+        </div>
+
+        <div class="form-group">
+            <label>NIK:</label>
+            <input type="text" id="nik" value="1234567890123456">
+        </div>
+
+        <div class="form-group">
+            <label>Jenis Dokumen:</label>
+            <select id="dokumen">
+                <option value="KTP">KTP</option>
+                <option value="SIM">SIM</option>
+                <option value="STNK">STNK</option>
+                <option value="BPKB">BPKB</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Nomor Dokumen:</label>
+            <input type="text" id="nomorDokumen" value="1234567890">
+        </div>
+
+        <div class="form-group">
+            <label>Tanggal:</label>
+            <input type="date" id="tanggal" value="2024-09-20">
+        </div>
+
+        <button onclick="generateQR()">Generate QR Code</button>
+
+        <div id="qrResult" style="display: none;">
+            <h3>QR Code Generated:</h3>
+            <canvas id="qrCode"></canvas>
+            <div class="test-link">
+                <strong>Test URL:</strong><br>
+                <span id="qrUrl"></span>
+            </div>
+            <button onclick="testScan()">Test Scan (Open Verify Page)</button>
+        </div>
+    </div>
+
+    <script>
+        function generateQR() {
+            const data = {
+                type: 'surat_kehilangan',
+                nomor: document.getElementById('nomor').value,
+                nama: document.getElementById('nama').value,
+                nik: document.getElementById('nik').value,
+                dokumen: document.getElementById('dokumen').value,
+                nomor_dokumen: document.getElementById('nomorDokumen').value,
+                tanggal: new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                })
+            };
+
+            const qrUrl = `verify.html?data=${encodeURIComponent(JSON.stringify(data))}`;
+
+            new QRious({
+                element: document.getElementById('qrCode'),
+                value: qrUrl,
+                size: 200,
+                level: 'M'
+            });
+
+            document.getElementById('qrUrl').textContent = window.location.origin + '/' + qrUrl;
+            document.getElementById('qrResult').style.display = 'block';
+        }
+
+        function testScan() {
+            const url = document.getElementById('qrUrl').textContent;
+            window.open(url, '_blank');
+        }
+
+        // Generate initial QR on load
+        window.onload = function () {
+            generateQR();
+        };
+    </script>
+</body>
+
+</html>

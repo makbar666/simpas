@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Surat F4 dengan Kop Surat</title>
   <style>
@@ -188,6 +190,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <div class="container" id="surat">
@@ -201,9 +204,21 @@
         </div>
         <div class="kop-kanan">
           <table>
-            <tr><td>Model</td><td>:</td><td>C</td></tr>
-            <tr><td>Bulan</td><td>:</td><td>[bulan saat surat dibuat]</td></tr>
-            <tr><td>Tahun</td><td>:</td><td>[tahun saat surat dibuat]</td></tr>
+            <tr>
+              <td>Model</td>
+              <td>:</td>
+              <td>C</td>
+            </tr>
+            <tr>
+              <td>Bulan</td>
+              <td>:</td>
+              <td>[bulan saat surat dibuat]</td>
+            </tr>
+            <tr>
+              <td>Tahun</td>
+              <td>:</td>
+              <td>[tahun saat surat dibuat]</td>
+            </tr>
           </table>
         </div>
       </div>
@@ -215,130 +230,194 @@
           <p class="judul-utama">
             <strong>SURAT TANDA PENERIMAAN LAPORAN KEHILANGAN BARANG/SURAT</strong>
           </p>
-          <p>Nomor : STPLKB / C / [nomor dari input pelapor] / [bulan saat surat dibuat dalam romawi] / [tahun saat surat dibuat] / POLSEK / SPKT</p>
+          <p>Nomor : STPLKB / C / [nomor dari input pelapor] / [bulan saat surat dibuat dalam romawi] / [tahun saat
+            surat dibuat] / POLSEK / SPKT</p>
         </div>
       </div>
 
       <!-- Isi Surat -->
       <div class="isi-surat">
         <p>
-          Yang bertanda tangan di bawah ini, telah datang ke Kantor Kepolisian Sektor Arahan pada hari [hari saat surat dibuat], tanggal [tanggal bulan tahun saat surat dibuat] pukul [jam saat surat ini dibuat] WIB seseorang yang mengaku bernama :
+          Yang bertanda tangan di bawah ini, telah datang ke Kantor Kepolisian Sektor Arahan pada hari [hari saat surat
+          dibuat], tanggal [tanggal bulan tahun saat surat dibuat] pukul [jam saat surat ini dibuat] WIB seseorang yang
+          mengaku bernama :
         </p>
 
         <table class="data-pelapor">
-          <tr><td>Nama</td><td>:</td><td><strong>[Nama Lengkap dari input pelapor]</strong></td></tr>
-          <tr><td>Tempat, Tanggal Lahir</td><td>:</td><td>[Tempat, Tanggal Lahir dari input pelapor]</td></tr>
-          <tr><td>Agama</td><td>:</td><td>[Agama dari input pelapor]</td></tr>
-          <tr><td>Pekerjaan</td><td>:</td><td>[Pekerjaan dari input pelapor]</td></tr>
-          <tr><td>Alamat</td><td>:</td><td>[Alamat Baris 1 dari input pelapor]<br/>[Alamat Baris 2 dari input pelapor]</td></tr>
-          <tr><td>NIK</td><td>:</td><td>[NIK dari input pelapor]</td></tr>
+          <tr>
+            <td>Nama</td>
+            <td>:</td>
+            <td><strong>[Nama Lengkap dari input pelapor]</strong></td>
+          </tr>
+          <tr>
+            <td>Tempat, Tanggal Lahir</td>
+            <td>:</td>
+            <td>[Tempat, Tanggal Lahir dari input pelapor]</td>
+          </tr>
+          <tr>
+            <td>Agama</td>
+            <td>:</td>
+            <td>[Agama dari input pelapor]</td>
+          </tr>
+          <tr>
+            <td>Pekerjaan</td>
+            <td>:</td>
+            <td>[Pekerjaan dari input pelapor]</td>
+          </tr>
+          <tr>
+            <td>Alamat</td>
+            <td>:</td>
+            <td>[Alamat Baris 1 dari input pelapor]<br />[Alamat Baris 2 dari input pelapor]</td>
+          </tr>
+          <tr>
+            <td>NIK</td>
+            <td>:</td>
+            <td>[NIK dari input pelapor]</td>
+          </tr>
         </table>
 
         <p>Melaporkan tentang kehilangan barang atau surat-surat penting berupa:</p>
 
         <p class="hanging-indent">
-          - <strong>1 (satu) buah/lembar [jenis dokumen dari input form kehilangan], A.n [nama pemilik dokumen dari input form kehilangan], dengan [label-nomor] : [nomor dokumen dari input form kehilangan], dan yang dikeluarkan dari [tempat diterbitkan dari input form kehilangan].</strong>
+          - <strong>1 (satu) buah/lembar [jenis dokumen dari input form kehilangan], A.n [nama pemilik dokumen dari
+            input form kehilangan], dengan [label-nomor] : [nomor dokumen dari input form kehilangan], dan yang
+            dikeluarkan dari [tempat diterbitkan dari input form kehilangan].</strong>
         </p>
 
         <p style="border-top: 1px solid black; padding-top: 6px; margin-top: 10px;">
-          Diketahui hilang pada hari [perkiraan tanggal hilang lengkap dengan hari] sekira pukul [perkiraan jam hilang] WIB di dalam [perkiraan tempat kehilangan jika hilang diperjalanan langsung sambung dengan detail perjalanan] dan pada saat diperlukan dokumen tersebut tidak ada/hilang.
+          Diketahui hilang pada hari [perkiraan tanggal hilang lengkap dengan hari] sekira pukul [perkiraan jam hilang]
+          WIB di dalam [perkiraan tempat kehilangan jika hilang diperjalanan langsung sambung dengan detail perjalanan]
+          dan pada saat diperlukan dokumen tersebut tidak ada/hilang.
         </p>
 
         <p>
-          Sesuai dengan laporan/pengaduan Polisi dengan Nomor : <strong><u>STPLKB / C / [nomor dari input pelapor] / [bulan saat surat dibuat dalam romawi] / [tahun surat dibuat] / POLSEK / SPKT,</u></strong> pada tanggal [tanggal bulan tahun surat dibuat].
+          Sesuai dengan laporan/pengaduan Polisi dengan Nomor : <strong><u>STPLKB / C / [nomor dari input pelapor] /
+              [bulan saat surat dibuat dalam romawi] / [tahun surat dibuat] / POLSEK / SPKT,</u></strong> pada tanggal
+          [tanggal bulan tahun surat dibuat].
         </p>
 
         <p style="border-bottom: 1px solid black; padding-bottom: 6px; margin-top: 10px;">
-          Surat ini Resmi dikeluarkan dan ditandatangani dari Kantor Kepolisian Sektor Arahan. Demikian surat laporan kehilangan ini dibuat, surat ini dibuat dengan sebenar-benarnya dan untuk digunakan seperlunya.
+          Surat ini Resmi dikeluarkan dan ditandatangani dari Kantor Kepolisian Sektor Arahan. Demikian surat laporan
+          kehilangan ini dibuat, surat ini dibuat dengan sebenar-benarnya dan untuk digunakan seperlunya.
         </p>
 
         <!-- Tanda Tangan -->
         <table class="tanda-tangan">
           <tr>
             <td><br>Pelapor</td>
-            <td>Arahan, [tanggal bulan tahun surat dibuat]<br/>Yang menerima laporan</td>
+            <td>Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan</td>
           </tr>
           <tr>
             <td style="padding-top: 60px;"><strong><u>[Nama Pelapor dari input pelapor]</u></strong></td>
             <td style="padding-top: 60px; text-align: center;">
-              <div style="border-bottom: 1px solid black; display: inline-block; padding-bottom: 2px;"><strong>[Nama Petugas]</strong></div><br/>[Pangkat] NRP [NRP]
+              <div style="border-bottom: 1px solid black; display: inline-block; padding-bottom: 2px;"><strong>[Nama
+                  Petugas]</strong></div><br />[Pangkat] NRP [NRP]
             </td>
           </tr>
         </table>
 
         <!-- Catatan -->
         <div class="catatan">
-          <strong>Catatan:</strong> Surat Tanda Penerimaan Laporan Kehilangan ini bukan merupakan pengganti dari barang/surat yang hilang serta tidak menjadikan jaminan mutlak terhadap tindakan hukum sewaktu-waktu dan Surat Keterangan ini berlaku selama 14 (empat belas) hari sejak dikeluarkan.
+          <strong>Catatan:</strong> Surat Tanda Penerimaan Laporan Kehilangan ini bukan merupakan pengganti dari
+          barang/surat yang hilang serta tidak menjadikan jaminan mutlak terhadap tindakan hukum sewaktu-waktu.
+          Keterangan ini berlaku selama 14 (empat belas) hari sejak dikeluarkan.
+
+          <!-- QR Code Section -->
+          <div style="margin-top: 40px; text-align: center;">
+            <p style="font-size: 12px; margin-bottom: 10px;"><strong>Verifikasi Keaslian Dokumen</strong></p>
+            <canvas id="qrCode" style="border: 1px solid #ccc; padding: 5px;"></canvas>
+            <p style="font-size: 10px; margin-top: 5px;">Scan QR Code untuk verifikasi keaslian dokumen ini</p>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
 
   <script>
-  window.onload = function () {
-    const pelapor = JSON.parse(localStorage.getItem('dataPelapor') || '{}');
-    const hilang = JSON.parse(localStorage.getItem('dataKehilangan') || '{}');
+    window.onload = function () {
+      const pelapor = JSON.parse(localStorage.getItem('dataPelapor') || '{}');
+      const hilang = JSON.parse(localStorage.getItem('dataKehilangan') || '{}');
 
-    if (!pelapor || !hilang || !pelapor.nama) {
-      alert("Data tidak lengkap. Silakan isi form pelapor dan kehilangan terlebih dahulu.");
-      window.location.href = "input-pelapor.html";
-      return;
-    }
+      if (!pelapor || !hilang || !pelapor.nama) {
+        alert("Data tidak lengkap. Silakan isi form pelapor dan kehilangan terlebih dahulu.");
+        window.location.href = "input-pelapor.html";
+        return;
+      }
 
-    const today = new Date();
-    const hari = today.toLocaleDateString('id-ID', { weekday: 'long' });
-    const tanggalLengkap = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-    const jamLengkap = today.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    const tahun = today.getFullYear();
-    const bulanRomawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][today.getMonth()];
-    const bulanTeks = today.toLocaleDateString('id-ID', { month: 'long' });
+      const today = new Date();
+      const hari = today.toLocaleDateString('id-ID', { weekday: 'long' });
+      const tanggalLengkap = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      const jamLengkap = today.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const tahun = today.getFullYear();
+      const bulanRomawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][today.getMonth()];
+      const bulanTeks = today.toLocaleDateString('id-ID', { month: 'long' });
 
-    const labelNomor = hilang.surat?.toLowerCase().includes('ktp') ? 'NIK' : 'Nomor';
+      const labelNomor = (hilang.surat || '').toLowerCase().includes('ktp') ? 'NIK' : 'Nomor';
 
-    document.body.innerHTML = document.body.innerHTML
-      .replace(/\[Nama Lengkap dari input pelapor\]/g, pelapor.nama)
-      .replace(/\[Tempat, Tanggal Lahir dari input pelapor\]/g, pelapor.ttlp)
-      .replace(/\[Agama dari input pelapor\]/g, pelapor.agama)
-      .replace(/\[Pekerjaan dari input pelapor\]/g, pelapor.pekerjaan)
-      .replace(/\[Alamat Baris 1 dari input pelapor\]/g, pelapor.alamat1)
-      .replace(/\[Alamat Baris 2 dari input pelapor\]/g, pelapor.alamat2)
-      .replace(/\[NIK dari input pelapor\]/g, pelapor.nik)
-      .replace(/\[jenis dokumen dari input form kehilangan\]/g, hilang.surat)
-      .replace(/\[nama pemilik dokumen dari input form kehilangan\]/g, hilang.namapemilik)
-      .replace(/\[label-nomor\]/g, labelNomor)
-      .replace(/\[nomor dokumen dari input form kehilangan\]/g, hilang.nodokumen)
-      .replace(/\[tempat diterbitkan dari input form kehilangan\]/g, hilang.asaldokumen)
-      .replace(/\[perkiraan tanggal hilang lengkap dengan hari\]/g, new Date(hilang.tanggalhilang).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))
-      .replace(/\[perkiraan jam hilang\]/g, hilang.waktukehilangan)
-      .replace(/\[perkiraan tempat kehilangan.*?\]/g, hilang.tempathilang === "Perjalanan" ? hilang.tempathilang + " " + hilang.detailperjalanan : hilang.tempathilang)
-      .replace(/\[nomor dari input pelapor\]/g, pelapor.nosurat)
-      .replace(/\[Nama Pelapor dari input pelapor\]/g, pelapor.nama)
-      .replace(/\[bulan saat surat dibuat\]/g, bulanTeks)
-      .replace(/\[bulan saat surat dibuat dalam romawi\]/g, bulanRomawi)
-      .replace(/\[tahun saat surat dibuat\]/g, tahun)
-      .replace(/\[tahun surat dibuat\]/g, tahun)
-      .replace(/\[tanggal bulan tahun saat surat dibuat\]/g, tanggalLengkap)
-      .replace(/\[tanggal bulan tahun surat dibuat\]/g, tanggalLengkap)
-      .replace(/\[hari saat surat dibuat\]/g, hari)
-      .replace(/\[jam saat surat ini dibuat\]/g, jamLengkap);
+      // Ganti placeholder di dokumen
+      document.body.innerHTML = document.body.innerHTML
+        .replace(/\[Nama Lengkap dari input pelapor\]/g, pelapor.nama)
+        .replace(/\[Tempat, Tanggal Lahir dari input pelapor\]/g, pelapor.ttlp)
+        .replace(/\[Agama dari input pelapor\]/g, pelapor.agama)
+        .replace(/\[Pekerjaan dari input pelapor\]/g, pelapor.pekerjaan)
+        .replace(/\[Alamat Baris 1 dari input pelapor\]/g, pelapor.alamat1)
+        .replace(/\[Alamat Baris 2 dari input pelapor\]/g, pelapor.alamat2)
+        .replace(/\[NIK dari input pelapor\]/g, pelapor.nik)
+        .replace(/\[jenis dokumen dari input form kehilangan\]/g, hilang.surat || '')
+        .replace(/\[nama pemilik dokumen dari input form kehilangan\]/g, hilang.namapemilik || '')
+        .replace(/\[label-nomor\]/g, labelNomor)
+        .replace(/\[nomor dokumen dari input form kehilangan\]/g, hilang.nodokumen || '')
+        .replace(/\[tempat diterbitkan dari input form kehilangan\]/g, hilang.asaldokumen || '')
+        .replace(/\[perkiraan tanggal hilang lengkap dengan hari\]/g, hilang.tanggalhilang ? new Date(hilang.tanggalhilang).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '')
+        .replace(/\[perkiraan jam hilang\]/g, hilang.waktukehilangan || '')
+        .replace(/\[perkiraan tempat kehilangan.*?\]/g, (hilang.tempathilang === "Perjalanan" ? (hilang.tempathilang + " " + (hilang.detailperjalanan || '')) : (hilang.tempathilang || '')))
+        .replace(/\[nomor dari input pelapor\]/g, pelapor.nosurat || '')
+        .replace(/\[Nama Pelapor dari input pelapor\]/g, pelapor.nama || '')
+        .replace(/\[bulan saat surat dibuat\]/g, bulanTeks)
+        .replace(/\[bulan saat surat dibuat dalam romawi\]/g, bulanRomawi)
+        .replace(/\[tahun saat surat dibuat\]/g, tahun)
+        .replace(/\[tahun surat dibuat\]/g, tahun)
+        .replace(/\[tanggal bulan tahun saat surat dibuat\]/g, tanggalLengkap)
+        .replace(/\[tanggal bulan tahun surat dibuat\]/g, tanggalLengkap)
+        .replace(/\[hari saat surat dibuat\]/g, hari)
+        .replace(/\[jam saat surat ini dibuat\]/g, jamLengkap);
 
-    localStorage.removeItem('dataPelapor');
-    localStorage.removeItem('dataKehilangan');
+      // --- Buat QR setelah placeholder terganti ---
+      const overrideBase = localStorage.getItem('publicBaseUrl') || '';
+      const baseUrl = overrideBase || window.location.origin;
 
-    // Tambahkan bagian ini untuk otomatis cetak
-    if (localStorage.getItem('autoPrint') === 'true') {
-      localStorage.removeItem('autoPrint');
-      window.print();
-    }
-  };
+      // Pastikan path ke verify.html sesuai struktur project kamu.
+      // Misal verify.html sejajar dengan pr-kehil.html, cukup '/verify.html'
+      const verifyPath = '/verify.html';
 
-  // Tangani tombol ESC untuk kembali ke input pelapor
-  document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-      window.location.href = "input-pelapor.html";
-    }
-  });
-</script>
+      const qrData = {
+        type: 'surat_kehilangan',
+        nomor: `STPLKB/C/${pelapor.nosurat || ''}/${bulanRomawi}/${tahun}/POLSEK/SPKT`,
+        nama: pelapor.nama || '',
+        nik: pelapor.nik || '',
+        tanggal: tanggalLengkap,
+        dokumen: hilang.surat || '',
+        nomor_dokumen: hilang.nodokumen || ''
+      };
+
+      const qrUrl = `${baseUrl}${verifyPath}?data=${encodeURIComponent(JSON.stringify(qrData))}`;
+
+      const qrCanvas = document.getElementById('qrCode');
+      if (qrCanvas && typeof QRious !== 'undefined') {
+        new QRious({ element: qrCanvas, value: qrUrl, size: 120, level: 'M' });
+      }
+    };
+
+    // Esc untuk kembali
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        window.location.href = "input-pelapor.html";
+      }
+    });
+  </script>
+
 
 </body>
+
 </html>

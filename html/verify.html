@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Keaslian Dokumen - POLSEK Arahan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: grayscale(100%);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .verification-result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+
+        .verification-result.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-weight: bold;
+            color: #495057;
+            text-align: left;
+            flex: 1;
+        }
+
+        .data-value {
+            color: #212529;
+            text-align: right;
+            flex: 1;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .status-valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .data-item {
+                flex-direction: column;
+                text-align: left;
+            }
+
+            .data-value {
+                text-align: left;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="../img/polri.png" alt="Logo Polri">
+            <h1>Verifikasi Keaslian Dokumen</h1>
+            <p>POLSEK Arahan - Jawa Barat</p>
+        </div>
+
+        <div id="loading" style="display: none;">
+            <div class="loading"></div>
+            <p>Memverifikasi dokumen...</p>
+        </div>
+
+        <div id="result" style="display: none;">
+            <div class="verification-result">
+                <div id="status-badge" class="status-badge"></div>
+                <div id="document-data"></div>
+            </div>
+        </div>
+
+        <div id="error" style="display: none;">
+            <div class="verification-result error">
+                <h3 style="color: #721c24; margin-bottom: 10px;">Verifikasi Gagal</h3>
+                <p class="error-message" id="error-message"></p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 POLSEK Arahan - Sistem Informasi Pelayanan Masyarakat</p>
+            <p>Untuk informasi lebih lanjut, hubungi: (0234) 123456</p>
+        </div>
+    </div>
+
+    <script>
+        function verifyDocument() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get('data');
+
+            if (!dataParam) {
+                showError('Data verifikasi tidak ditemukan. Pastikan QR Code valid.');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(decodeURIComponent(dataParam));
+
+                if (data.type !== 'surat_kehilangan') {
+                    showError('Jenis dokumen tidak valid.');
+                    return;
+                }
+
+                showVerificationResult(data);
+            } catch (error) {
+                showError('Format data tidak valid. QR Code mungkin rusak.');
+            }
+        }
+
+        function showVerificationResult(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+
+            const statusBadge = document.getElementById('status-badge');
+            statusBadge.textContent = '✓ DOKUMEN ASLI';
+            statusBadge.className = 'status-badge status-valid';
+
+            const documentData = document.getElementById('document-data');
+            documentData.innerHTML = `
+        <div class="data-item">
+          <span class="data-label">Nomor Surat:</span>
+          <span class="data-value">${data.nomor || '-'}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">Nama Pelapor:</span>
+          <span class="data-value">${data.nama || '-'}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">NIK:</span>
+          <span class="data-value">${data.nik || '-'}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">Jenis Dokumen:</span>
+          <span class="data-value">${data.dokumen || '-'}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">Nomor Dokumen:</span>
+          <span class="data-value">${data.nomor_dokumen || '-'}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">Tanggal Dikeluarkan:</span>
+          <span class="data-value">${data.tanggal || '-'}</span>
+        </div>
+      `;
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // Initialize verification on page load
+        window.addEventListener('load', function () {
+            document.getElementById('loading').style.display = 'block';
+            setTimeout(verifyDocument, 1000); // Simulate processing time
+        });
+    </script>
+</body>
+
+</html>
