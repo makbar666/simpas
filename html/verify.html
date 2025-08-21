@@ -325,7 +325,7 @@
                         <td style="width:40%;">Pelapor</td>
 
                         <!-- kolom qr sempit di tengah -->
-                        <td rowspan="2" style="width:20%; vertical-align: middle; text-align:center;">
+                        <td rowspan="2" style="width:40%; vertical-align: middle; text-align:center;">
                             <canvas id="qrCode" style="display:block; margin:0 auto; background:#fff;"></canvas>
                         </td>
 
@@ -569,9 +569,10 @@
                 const baseUrl = overrideBase || window.location.origin;
                 const verifyUrl = baseUrl + window.location.pathname + window.location.search;
 
+                // Atur ukuran HD (misal 512x512 px)
                 const dpr = Math.max(1, window.devicePixelRatio || 1);
-                const cssSize = 100; // kamu set kecil; tetap OK karena URL sekarang sudah dipadatkan
-                const pxSize = Math.round(cssSize * dpr);
+                const cssSize = 130; // ukuran tampilan di layar (bisa diubah sesuai kebutuhan)
+                const pxSize = Math.round(512 * dpr); // ukuran HD sebenarnya (512x512 px)
                 qrCanvas.style.width = cssSize + 'px';
                 qrCanvas.style.height = cssSize + 'px';
 
