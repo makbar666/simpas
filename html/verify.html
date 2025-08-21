@@ -319,14 +319,26 @@
                 </p>
 
                 <!-- Tanda Tangan -->
-                <table class="tanda-tangan">
+                <table class="tanda-tangan" style="width:100%; text-align:center; table-layout:fixed;">
                     <tr>
-                        <td><br />Pelapor</td>
-                        <td>Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan</td>
+                        <!-- kolom pelapor agak lebar -->
+                        <td style="width:40%;">Pelapor</td>
+
+                        <!-- kolom qr sempit di tengah -->
+                        <td rowspan="2" style="width:20%; vertical-align: middle; text-align:center;">
+                            <canvas id="qrCode" style="display:block; margin:0 auto; background:#fff;"></canvas>
+                        </td>
+
+                        <!-- kolom petugas -->
+                        <td style="width:40%;">
+                            Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan
+                        </td>
                     </tr>
                     <tr>
-                        <td style="padding-top: 60px;"><strong><u>[Nama Pelapor dari input pelapor]</u></strong></td>
-                        <td style="padding-top: 60px; text-align: center;">
+                        <td style="padding-top: 60px;">
+                            <strong><u>[Nama Pelapor dari input pelapor]</u></strong>
+                        </td>
+                        <td style="padding-top: 60px;">
                             <div style="border-bottom: 1px solid #000; display: inline-block; padding-bottom: 2px;">
                                 <strong>[Nama Petugas]</strong>
                             </div><br />[Pangkat] NRP [NRP]
@@ -334,17 +346,18 @@
                     </tr>
                 </table>
 
+
                 <!-- Catatan + QR -->
                 <div class="catatan">
                     <strong>Catatan:</strong> Surat Tanda Penerimaan Laporan Kehilangan ini bukan merupakan pengganti
                     dari barang/surat yang hilang serta
                     tidak menjadikan jaminan mutlak terhadap tindakan hukum sewaktu-waktu. Keterangan ini berlaku selama
                     14 (empat belas) hari sejak dikeluarkan.
-                    <div class="qrwrap">
+                    <!-- <div class="qrwrap">
                         <p style="font-size:12px; margin-bottom: 10px;"><strong>Verifikasi Keaslian Dokumen</strong></p>
                         <canvas id="qrCode" style="display:block; margin:16px auto; background:#fff"></canvas>
                         <p>Scan QR Code untuk verifikasi keaslian dokumen ini</p>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -363,6 +376,49 @@
             const bin = atob(b64); const u8 = new Uint8Array(bin.length);
             for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
             return u8;
+        }
+
+        // Expand schema v2 (super-pendek) -> struktur baru standar
+        // v2 mapping:
+        // s:{nf,vb} p:{n,t,ag,pk,a1,a2,k,ns} k:{s,np,nd,ad,th,dp,ti,wk,ln} m:{hr,tg,jm,th,br,bt}
+        function expandV2(p) {
+            if (!p || p.v !== 2) return p;
+            return {
+                version: 1,
+                meta: {
+                    hari: p.m?.hr || '',
+                    tanggal_teks: p.m?.tg || '',
+                    jam_teks: p.m?.jm || '',
+                    tahun: p.m?.th || '',
+                    bulan_romawi: p.m?.br || '',
+                    bulan_teks: p.m?.bt || '',
+                },
+                surat: {
+                    nomor_full: p.s?.nf || '',
+                    catatan_masa_berlaku_hari: p.s?.vb ?? 14
+                },
+                pelapor: {
+                    nama: p.p?.n || '',
+                    ttlp: p.p?.t || '',
+                    agama: p.p?.ag || '',
+                    pekerjaan: p.p?.pk || '',
+                    alamat1: p.p?.a1 || '',
+                    alamat2: p.p?.a2 || '',
+                    nik: p.p?.k || '',
+                    nosurat: p.p?.ns || ''
+                },
+                kehilangan: {
+                    surat: p.k?.s || '',
+                    namapemilik: p.k?.np || '',
+                    nodokumen: p.k?.nd || '',
+                    asaldokumen: p.k?.ad || '',
+                    tempathilang: p.k?.th || '',
+                    detailperjalanan: p.k?.dp || '',
+                    tanggalhilang_iso: p.k?.ti || null,
+                    waktukehilangan: p.k?.wk || '',
+                    label_nomor: p.k?.ln || 'Nomor'
+                }
+            };
         }
 
         // Ambil & decode payload (mendukung plain, lz, gz)
@@ -514,7 +570,7 @@
                 const verifyUrl = baseUrl + window.location.pathname + window.location.search;
 
                 const dpr = Math.max(1, window.devicePixelRatio || 1);
-                const cssSize = 80;
+                const cssSize = 100; // kamu set kecil; tetap OK karena URL sekarang sudah dipadatkan
                 const pxSize = Math.round(cssSize * dpr);
                 qrCanvas.style.width = cssSize + 'px';
                 qrCanvas.style.height = cssSize + 'px';
@@ -530,9 +586,11 @@
             }
         }
 
+        // Start flow: decode + expand v2 + render
         window.onload = function () {
             getPayload(function (payload) {
-                renderFromPayload(payload);
+                const normalized = expandV2(payload); // ekspansi jika v2
+                renderFromPayload(normalized);
             });
         };
 
@@ -541,6 +599,7 @@
             if (e.key === 'Escape') window.history.back();
         });
     </script>
+
 
 
 </body>

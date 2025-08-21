@@ -340,8 +340,7 @@
 
   <script>
     function u8ToBase64Url(u8) {
-      let bin = '';
-      for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+      let bin = ''; for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
       return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
 
@@ -472,17 +471,36 @@
       const overrideBase = localStorage.getItem('publicBaseUrl') || '';
       const baseUrl = overrideBase || window.location.origin;
       const verifyPath = '/verify.html'; // sesuaikan bila path beda
-      const raw = JSON.stringify(qrData);
-      const gz = pako.deflateRaw(new TextEncoder().encode(raw)); // Deflate tanpa header
+      const payloadV2 = {
+        v: 2,
+        s: { nf: nomorFull, vb: 14 },
+        p: {
+          n: pelapor.nama || '', t: pelapor.ttlp || '', ag: pelapor.agama || '',
+          pk: pelapor.pekerjaan || '', a1: pelapor.alamat1 || '', a2: pelapor.alamat2 || '',
+          k: pelapor.nik || '', ns: pelapor.nosurat || ''
+        },
+        k: {
+          s: hilang.surat || '', np: hilang.namapemilik || '', nd: hilang.nodokumen || '',
+          ad: hilang.asaldokumen || '', th: hilang.tempathilang || '',
+          dp: hilang.detailperjalanan || '', ti: tanggalHilangISO, wk: hilang.waktukehilangan || '',
+          ln: labelNomor
+        },
+        m: { hr: hari, tg: tanggalText, jm: jamText, th: tahun, br: bulanRomawi, bt: bulanTeks }
+      };
+
+      // === KOMPRESI: deflateRaw level 9 + base64url ===
+      const raw = JSON.stringify(payloadV2);
+      const u8 = new TextEncoder().encode(raw);
+      const gz = pako.deflateRaw(u8, { level: 9 }); // level maks
       const packed = u8ToBase64Url(gz);
 
-      // codec=gz agar verify tahu cara decode
+      // === URL VERIFIKASI SUPER PENDEK ===
       const qrUrl = `https://simpas.netlify.app/html/verify.html?codec=gz&data=${packed}`;
 
-      // ====== GENERATE QR (tetap) ======
+      // === render QR (tetap) ===
       const qrCanvas = document.getElementById('qrCode');
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const cssSize = 80; // naikkan ke 200–280 kalau masih susah discan
+      const cssSize = 150;              // boleh 150–200px; kalau mau sangat kecil, naikkan koreksi 'H' & jaga quiet zone
       const pxSize = Math.round(cssSize * dpr);
       qrCanvas.style.width = cssSize + 'px';
       qrCanvas.style.height = cssSize + 'px';
