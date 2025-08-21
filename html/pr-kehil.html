@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Surat F4 dengan Kop Surat</title>
   <style>
@@ -325,7 +326,8 @@
           <!-- QR Code Section -->
           <div style="margin-top: 40px; text-align: center;">
             <p style="font-size: 12px; margin-bottom: 10px;"><strong>Verifikasi Keaslian Dokumen</strong></p>
-            <canvas id="qrCode" style="border: 1px solid #ccc; padding: 5px;"></canvas>
+            <canvas id="qrCode" style="display:block; margin:16px auto; background:#fff"></canvas>
+
             <p style="font-size: 10px; margin-top: 5px;">Scan QR Code untuk verifikasi keaslian dokumen ini</p>
           </div>
         </div>
@@ -345,75 +347,153 @@
         return;
       }
 
-      const today = new Date();
-      const hari = today.toLocaleDateString('id-ID', { weekday: 'long' });
-      const tanggalLengkap = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-      const jamLengkap = today.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-      const tahun = today.getFullYear();
-      const bulanRomawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][today.getMonth()];
-      const bulanTeks = today.toLocaleDateString('id-ID', { month: 'long' });
+      // ====== META WAKTU ======
+      const now = new Date();
+      const hari = now.toLocaleDateString('id-ID', { weekday: 'long' });
+      const tanggalText = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      const jamText = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const tahun = now.getFullYear();
+      const bulanRomawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][now.getMonth()];
+      const bulanTeks = now.toLocaleDateString('id-ID', { month: 'long' });
 
       const labelNomor = (hilang.surat || '').toLowerCase().includes('ktp') ? 'NIK' : 'Nomor';
 
-      // Ganti placeholder di dokumen
+      // ====== RENDER PLACEHOLDER KE DOKUMEN CETAK (seperti sebelumnya) ======
       document.body.innerHTML = document.body.innerHTML
-        .replace(/\[Nama Lengkap dari input pelapor\]/g, pelapor.nama)
-        .replace(/\[Tempat, Tanggal Lahir dari input pelapor\]/g, pelapor.ttlp)
-        .replace(/\[Agama dari input pelapor\]/g, pelapor.agama)
-        .replace(/\[Pekerjaan dari input pelapor\]/g, pelapor.pekerjaan)
-        .replace(/\[Alamat Baris 1 dari input pelapor\]/g, pelapor.alamat1)
-        .replace(/\[Alamat Baris 2 dari input pelapor\]/g, pelapor.alamat2)
-        .replace(/\[NIK dari input pelapor\]/g, pelapor.nik)
+        .replace(/\[Nama Lengkap dari input pelapor\]/g, pelapor.nama || '')
+        .replace(/\[Tempat, Tanggal Lahir dari input pelapor\]/g, pelapor.ttlp || '')
+        .replace(/\[Agama dari input pelapor\]/g, pelapor.agama || '')
+        .replace(/\[Pekerjaan dari input pelapor\]/g, pelapor.pekerjaan || '')
+        .replace(/\[Alamat Baris 1 dari input pelapor\]/g, pelapor.alamat1 || '')
+        .replace(/\[Alamat Baris 2 dari input pelapor\]/g, pelapor.alamat2 || '')
+        .replace(/\[NIK dari input pelapor\]/g, pelapor.nik || '')
         .replace(/\[jenis dokumen dari input form kehilangan\]/g, hilang.surat || '')
         .replace(/\[nama pemilik dokumen dari input form kehilangan\]/g, hilang.namapemilik || '')
         .replace(/\[label-nomor\]/g, labelNomor)
         .replace(/\[nomor dokumen dari input form kehilangan\]/g, hilang.nodokumen || '')
         .replace(/\[tempat diterbitkan dari input form kehilangan\]/g, hilang.asaldokumen || '')
-        .replace(/\[perkiraan tanggal hilang lengkap dengan hari\]/g, hilang.tanggalhilang ? new Date(hilang.tanggalhilang).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '')
+        .replace(
+          /\[perkiraan tanggal hilang lengkap dengan hari\]/g,
+          hilang.tanggalhilang
+            ? new Date(hilang.tanggalhilang).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+            : ''
+        )
         .replace(/\[perkiraan jam hilang\]/g, hilang.waktukehilangan || '')
-        .replace(/\[perkiraan tempat kehilangan.*?\]/g, (hilang.tempathilang === "Perjalanan" ? (hilang.tempathilang + " " + (hilang.detailperjalanan || '')) : (hilang.tempathilang || '')))
+        .replace(
+          /\[perkiraan tempat kehilangan.*?\]/g,
+          (hilang.tempathilang === "Perjalanan"
+            ? (hilang.tempathilang + ' ' + (hilang.detailperjalanan || ''))
+            : (hilang.tempathilang || ''))
+        )
         .replace(/\[nomor dari input pelapor\]/g, pelapor.nosurat || '')
         .replace(/\[Nama Pelapor dari input pelapor\]/g, pelapor.nama || '')
         .replace(/\[bulan saat surat dibuat\]/g, bulanTeks)
         .replace(/\[bulan saat surat dibuat dalam romawi\]/g, bulanRomawi)
         .replace(/\[tahun saat surat dibuat\]/g, tahun)
         .replace(/\[tahun surat dibuat\]/g, tahun)
-        .replace(/\[tanggal bulan tahun saat surat dibuat\]/g, tanggalLengkap)
-        .replace(/\[tanggal bulan tahun surat dibuat\]/g, tanggalLengkap)
+        .replace(/\[tanggal bulan tahun saat surat dibuat\]/g, tanggalText)
+        .replace(/\[tanggal bulan tahun surat dibuat\]/g, tanggalText)
         .replace(/\[hari saat surat dibuat\]/g, hari)
-        .replace(/\[jam saat surat ini dibuat\]/g, jamLengkap);
+        .replace(/\[jam saat surat ini dibuat\]/g, jamText);
 
-      // --- Buat QR setelah placeholder terganti ---
-      const overrideBase = localStorage.getItem('publicBaseUrl') || '';
-      const baseUrl = overrideBase || window.location.origin;
+      // ====== SUSUN PAYLOAD LENGKAP UNTUK QR ======
+      const nomorFull = `STPLKB/C/${pelapor.nosurat || ''}/${bulanRomawi}/${tahun}/POLSEK/SPKT`;
 
-      // Pastikan path ke verify.html sesuai struktur project kamu.
-      // Misal verify.html sejajar dengan pr-kehil.html, cukup '/verify.html'
-      const verifyPath = '/verify.html';
+      // Normalisasi tanggal hilang (ISO) bila ada
+      const tanggalHilangISO = hilang.tanggalhilang ? new Date(hilang.tanggalhilang).toISOString() : null;
 
       const qrData = {
-        type: 'surat_kehilangan',
-        nomor: `STPLKB/C/${pelapor.nosurat || ''}/${bulanRomawi}/${tahun}/POLSEK/SPKT`,
-        nama: pelapor.nama || '',
-        nik: pelapor.nik || '',
-        tanggal: tanggalLengkap,
-        dokumen: hilang.surat || '',
-        nomor_dokumen: hilang.nodokumen || ''
+        version: 1,                  // untuk kompatibilitas ke depan
+        jenis: 'surat_kehilangan',
+
+        meta: {
+          dibuat_pada: now.toISOString(),
+          hari: hari,
+          tanggal_teks: tanggalText,
+          jam_teks: jamText,
+          tahun: tahun,
+          bulan_romawi: bulanRomawi,
+          bulan_teks: bulanTeks,
+          penerbit: {
+            polda: "POLDA JAWA BARAT",
+            polres: "RESOR INDRAMAYU",
+            polsek: "SEKTOR ARAHAN",
+            alamat: "Jl. Raya Arahan Lor, Arahan Indramayu - 45365",
+            model: "C"
+          }
+        },
+
+        surat: {
+          nomor_full: nomorFull,
+          catatan_masa_berlaku_hari: 14
+        },
+
+        pelapor: {
+          nama: pelapor.nama || '',
+          ttlp: pelapor.ttlp || '',
+          agama: pelapor.agama || '',
+          pekerjaan: pelapor.pekerjaan || '',
+          alamat1: pelapor.alamat1 || '',
+          alamat2: pelapor.alamat2 || '',
+          nik: pelapor.nik || '',
+          nosurat: pelapor.nosurat || ''
+        },
+
+        kehilangan: {
+          surat: hilang.surat || '',
+          namapemilik: hilang.namapemilik || '',
+          nodokumen: hilang.nodokumen || '',
+          asaldokumen: hilang.asaldokumen || '',
+          tempathilang: hilang.tempathilang || '',
+          detailperjalanan: hilang.detailperjalanan || '',
+          tanggalhilang_iso: tanggalHilangISO,
+          waktukehilangan: hilang.waktukehilangan || '',
+          label_nomor: labelNomor
+        },
+
+        // Opsi identitas petugas (isi bila kamu simpan di localStorage juga)
+        petugas: {
+          nama: pelapor.nama_petugas || '',
+          pangkat: pelapor.pangkat || '',
+          nrp: pelapor.nrp || ''
+        }
       };
 
-      const qrUrl = `${baseUrl}${verifyPath}?data=${encodeURIComponent(JSON.stringify(qrData))}`;
+      // ====== BANGUN URL VERIFIKASI ======
+      const overrideBase = localStorage.getItem('publicBaseUrl') || '';
+      const baseUrl = overrideBase || window.location.origin;
+      const verifyPath = '/verify.html'; // sesuaikan bila path beda
+      const raw = JSON.stringify(qrData);
+      const packed = LZString.compressToEncodedURIComponent(raw);
 
+
+      const qrUrl = `https://simpas.netlify.app/html/verify.html?codec=lz&data=${packed}`;;
+
+      // ====== GENERATE QR ======
       const qrCanvas = document.getElementById('qrCode');
-      if (qrCanvas && typeof QRious !== 'undefined') {
-        new QRious({ element: qrCanvas, value: qrUrl, size: 120, level: 'M' });
-      }
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+      // target ukuran visual (CSS) 280px, tapi resolusi fisik dikali DPR
+      const cssSize = 150;
+      const pxSize = Math.round(cssSize * dpr);
+
+      qrCanvas.style.width = cssSize + 'px';
+      qrCanvas.style.height = cssSize + 'px';
+
+      new QRious({
+        element: qrCanvas,
+        value: qrUrl,           // tetap pakai url kamu
+        size: pxSize,           // resolusi tinggi
+        level: 'H',             // koreksi lebih tinggi
+        background: 'white',
+        foreground: '#000000'
+      });
+
     };
 
-    // Esc untuk kembali
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') {
-        window.location.href = "input-pelapor.html";
-      }
+    // Esc untuk kembali ke form
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') window.location.href = "input-pelapor.html";
     });
   </script>
 

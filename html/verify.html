@@ -2,274 +2,519 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Keaslian Dokumen - POLSEK Arahan</title>
+    <meta charset="UTF-8" />
+    <title>Verifikasi Surat Kehilangan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* === Gaya diadaptasi dari pr-kehil.html agar mirip hasil cetak === */
+        @page {
+            size: 210mm 330mm;
+            margin: 20mm;
         }
 
         body {
-            font-family: 'Tahoma', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: "Tahoma", sans-serif;
+            font-size: 13px;
+            margin: 0;
             padding: 20px;
+            background: #ccc;
+        }
+
+        .page {
+            background: white;
+            width: 215mm;
+            min-height: 330mm;
+            margin: auto;
+            padding: 10mm 20mm 20mm 20mm;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+            box-sizing: border-box;
         }
 
         .container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
             width: 100%;
-            padding: 40px;
+        }
+
+        .kop-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .kop-surat {
             text-align: center;
         }
 
-        .header {
-            margin-bottom: 30px;
-        }
-
-        .header img {
-            width: 80px;
-            height: auto;
-            margin-bottom: 15px;
-            filter: grayscale(100%);
-        }
-
-        .header h1 {
-            color: #2c3e50;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-
-        .verification-result {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 20px 0;
-            border-left: 5px solid #28a745;
-        }
-
-        .verification-result.error {
-            border-left-color: #dc3545;
-            background: #f8d7da;
-        }
-
-        .data-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .data-item:last-child {
-            border-bottom: none;
-        }
-
-        .data-label {
+        .kop-surat h3 {
+            margin: 0;
             font-weight: bold;
-            color: #495057;
+            font-size: 13px;
+        }
+
+        .kop-surat p {
+            margin: 2px 0;
+            font-size: 13px;
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+        }
+
+        .kop-kanan {
             text-align: left;
-            flex: 1;
+            font-size: 13px;
+            line-height: 1.4;
+            min-width: 100px;
+            margin-left: 20px;
         }
 
-        .data-value {
-            color: #212529;
-            text-align: right;
-            flex: 1;
+        .kop-kanan table {
+            border-collapse: collapse;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+        .kop-kanan td {
+            padding: 1px 4px;
+            font-size: 13px;
+        }
+
+        .imgpolri {
+            text-align: center;
+            margin: 20px 0 10px;
+        }
+
+        .imgpolri img {
+            width: 60px;
+            height: auto;
+            filter: grayscale(100%);
+            margin-bottom: 5px;
+        }
+
+        .judul-utama {
+            font-size: 13px;
             font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .status-valid {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-invalid {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: 12px;
-            color: #6c757d;
-        }
-
-        .loading {
+            border-bottom: 1px solid #000;
             display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            padding-bottom: 2px;
+            margin: 2px 0;
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+        .judul-surat p {
+            margin: 2px 0;
+            font-size: 13px;
         }
 
-        .error-message {
-            color: #dc3545;
-            font-size: 14px;
-            margin: 10px 0;
+        .isi-surat {
+            text-align: justify;
+            margin-top: 20px;
+            line-height: 1.5;
+            font-size: 13px;
         }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-                margin: 10px;
+        .data-pelapor {
+            border-collapse: collapse;
+            margin: 10px 0 20px;
+            width: 100%;
+            max-width: 400px;
+            font-size: 13px;
+        }
+
+        .data-pelapor td {
+            padding: 2px 5px;
+            vertical-align: top;
+        }
+
+        .data-pelapor td:first-child {
+            width: 140px;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .data-pelapor td:nth-child(2) {
+            width: 10px;
+            text-align: center;
+        }
+
+        .data-pelapor td:nth-child(3) {
+            max-width: 520px;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .hanging-indent {
+            margin: 0 0 1em;
+            padding-left: 1.5em;
+            text-indent: -1.5em;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .hanging-indent strong {
+            font-weight: bold;
+        }
+
+        .tanda-tangan {
+            width: 100%;
+            margin-top: 40px;
+            font-size: 13px;
+            text-align: center;
+            border-collapse: collapse;
+        }
+
+        .tanda-tangan td {
+            vertical-align: top;
+            padding: 0 20px;
+        }
+
+        .catatan {
+            margin-top: 30px;
+            font-size: 12px;
+            font-style: italic;
+            border-top: 1px dashed #000;
+            padding-top: 8px;
+            color: #000;
+        }
+
+        /* QR di catatan */
+        .qrwrap {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .qrwrap p {
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+                margin: 0;
             }
 
-            .data-item {
-                flex-direction: column;
-                text-align: left;
-            }
-
-            .data-value {
-                text-align: left;
-                margin-top: 5px;
+            .page {
+                box-shadow: none;
+                margin: 0;
+                width: auto;
+                min-height: auto;
+                padding: 0;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="../img/polri.png" alt="Logo Polri">
-            <h1>Verifikasi Keaslian Dokumen</h1>
-            <p>POLSEK Arahan - Jawa Barat</p>
-        </div>
-
-        <div id="loading" style="display: none;">
-            <div class="loading"></div>
-            <p>Memverifikasi dokumen...</p>
-        </div>
-
-        <div id="result" style="display: none;">
-            <div class="verification-result">
-                <div id="status-badge" class="status-badge"></div>
-                <div id="document-data"></div>
+    <div class="page">
+        <div class="container" id="surat">
+            <!-- Kop Surat -->
+            <div class="kop-wrapper">
+                <div class="kop-surat">
+                    <h3>POLRI DAERAH JAWA BARAT</h3>
+                    <h3>RESOR INDRAMAYU</h3>
+                    <h3>SEKTOR ARAHAN</h3>
+                    <p>Jl. Raya Arahan Lor, Arahan Indramayu - 45365</p>
+                </div>
+                <div class="kop-kanan">
+                    <table>
+                        <tr>
+                            <td>Model</td>
+                            <td>:</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Bulan</td>
+                            <td>:</td>
+                            <td>[bulan saat surat dibuat]</td>
+                        </tr>
+                        <tr>
+                            <td>Tahun</td>
+                            <td>:</td>
+                            <td>[tahun saat surat dibuat]</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-        </div>
 
-        <div id="error" style="display: none;">
-            <div class="verification-result error">
-                <h3 style="color: #721c24; margin-bottom: 10px;">Verifikasi Gagal</h3>
-                <p class="error-message" id="error-message"></p>
+            <!-- Logo & Judul -->
+            <div class="imgpolri">
+                <img src="../img/polri.png" alt="Logo Polri" />
+                <div class="judul-surat">
+                    <p class="judul-utama"><strong>SURAT TANDA PENERIMAAN LAPORAN KEHILANGAN BARANG/SURAT</strong></p>
+                    <p>Nomor : STPLKB / C / [nomor dari input pelapor] / [bulan saat surat dibuat dalam romawi] / [tahun
+                        saat surat dibuat] / POLSEK / SPKT</p>
+                </div>
             </div>
-        </div>
 
-        <div class="footer">
-            <p>© 2024 POLSEK Arahan - Sistem Informasi Pelayanan Masyarakat</p>
-            <p>Untuk informasi lebih lanjut, hubungi: (0234) 123456</p>
+            <!-- Isi Surat -->
+            <div class="isi-surat">
+                <p>
+                    Yang bertanda tangan di bawah ini, telah datang ke Kantor Kepolisian Sektor Arahan pada hari [hari
+                    saat surat dibuat],
+                    tanggal [tanggal bulan tahun saat surat dibuat] pukul [jam saat surat ini dibuat] WIB seseorang yang
+                    mengaku bernama :
+                </p>
+
+                <table class="data-pelapor">
+                    <tr>
+                        <td>Nama</td>
+                        <td>:</td>
+                        <td><strong>[Nama Lengkap dari input pelapor]</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Tempat, Tanggal Lahir</td>
+                        <td>:</td>
+                        <td>[Tempat, Tanggal Lahir dari input pelapor]</td>
+                    </tr>
+                    <tr>
+                        <td>Agama</td>
+                        <td>:</td>
+                        <td>[Agama dari input pelapor]</td>
+                    </tr>
+                    <tr>
+                        <td>Pekerjaan</td>
+                        <td>:</td>
+                        <td>[Pekerjaan dari input pelapor]</td>
+                    </tr>
+                    <tr>
+                        <td>Alamat</td>
+                        <td>:</td>
+                        <td>[Alamat Baris 1 dari input pelapor]<br />[Alamat Baris 2 dari input pelapor]</td>
+                    </tr>
+                    <tr>
+                        <td>NIK</td>
+                        <td>:</td>
+                        <td>[NIK dari input pelapor]</td>
+                    </tr>
+                </table>
+
+                <p>Melaporkan tentang kehilangan barang atau surat-surat penting berupa:</p>
+
+                <p class="hanging-indent">
+                    - <strong>1 (satu) buah/lembar [jenis dokumen dari input form kehilangan], A.n [nama pemilik dokumen
+                        dari input form kehilangan],
+                        dengan [label-nomor] : [nomor dokumen dari input form kehilangan], dan yang dikeluarkan dari
+                        [tempat diterbitkan dari input form kehilangan].</strong>
+                </p>
+
+                <p style="border-top: 1px solid #000; padding-top: 6px; margin-top: 10px;">
+                    Diketahui hilang pada hari [perkiraan tanggal hilang lengkap dengan hari] sekira pukul [perkiraan
+                    jam hilang] WIB
+                    di dalam [perkiraan tempat kehilangan jika hilang diperjalanan langsung sambung dengan detail
+                    perjalanan]
+                    dan pada saat diperlukan dokumen tersebut tidak ada/hilang.
+                </p>
+
+                <p>
+                    Sesuai dengan laporan/pengaduan Polisi dengan Nomor :
+                    <strong><u>STPLKB / C / [nomor dari input pelapor] / [bulan saat surat dibuat dalam romawi] / [tahun
+                            surat dibuat] / POLSEK / SPKT,</u></strong>
+                    pada tanggal [tanggal bulan tahun surat dibuat].
+                </p>
+
+                <p style="border-bottom: 1px solid #000; padding-bottom: 6px; margin-top: 10px;">
+                    Surat ini Resmi dikeluarkan dan ditandatangani dari Kantor Kepolisian Sektor Arahan. Demikian surat
+                    laporan kehilangan ini dibuat,
+                    surat ini dibuat dengan sebenar-benarnya dan untuk digunakan seperlunya.
+                </p>
+
+                <!-- Tanda Tangan -->
+                <table class="tanda-tangan">
+                    <tr>
+                        <td><br />Pelapor</td>
+                        <td>Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: 60px;"><strong><u>[Nama Pelapor dari input pelapor]</u></strong></td>
+                        <td style="padding-top: 60px; text-align: center;">
+                            <div style="border-bottom: 1px solid #000; display: inline-block; padding-bottom: 2px;">
+                                <strong>[Nama Petugas]</strong>
+                            </div><br />[Pangkat] NRP [NRP]
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Catatan + QR -->
+                <div class="catatan">
+                    <strong>Catatan:</strong> Surat Tanda Penerimaan Laporan Kehilangan ini bukan merupakan pengganti
+                    dari barang/surat yang hilang serta
+                    tidak menjadikan jaminan mutlak terhadap tindakan hukum sewaktu-waktu. Keterangan ini berlaku selama
+                    14 (empat belas) hari sejak dikeluarkan.
+                    <div class="qrwrap">
+                        <p style="font-size:12px; margin-bottom: 10px;"><strong>Verifikasi Keaslian Dokumen</strong></p>
+                        <canvas id="qrCode" style="display:block; margin:16px auto; background:#fff"></canvas>
+                        <p>Scan QR Code untuk verifikasi keaslian dokumen ini</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        function verifyDocument() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const dataParam = urlParams.get('data');
+        // ==== Helper ====
+        function getQueryParam(name) { const p = new URLSearchParams(window.location.search); return p.get(name); }
+        function safeParse(str) { try { return JSON.parse(str) } catch { return null } }
+        function val(v, f = '-') { return (v === undefined || v === null || v === '') ? f : String(v) }
+        function pick(...args) { for (const a of args) { if (a !== undefined && a !== null && a !== '') return a } return '' }
 
-            if (!dataParam) {
-                showError('Data verifikasi tidak ditemukan. Pastikan QR Code valid.');
-                return;
-            }
+        // Ambil & decode payload (mendukung format lama & baru, serta kompres LZ jika dipakai)
+        function getPayload(cb) {
+            const raw = getQueryParam('data');
+            const codec = getQueryParam('codec'); // 'lz' jika kamu mengompres
+            if (!raw) return cb({});
 
-            try {
-                const data = JSON.parse(decodeURIComponent(dataParam));
-
-                if (data.type !== 'surat_kehilangan') {
-                    showError('Jenis dokumen tidak valid.');
+            // jika pakai kompresi LZ, pastikan LZString ada
+            if (codec === 'lz') {
+                if (window.LZString) {
+                    const dec = window.LZString.decompressFromEncodedURIComponent(raw) || '';
+                    return cb(safeParse(dec) || {});
+                } else {
+                    // muat LZString on-the-fly
+                    const s = document.createElement('script');
+                    s.src = "https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js";
+                    s.onload = () => {
+                        const dec = window.LZString.decompressFromEncodedURIComponent(raw) || '';
+                        cb(safeParse(dec) || {});
+                    };
+                    s.onerror = () => cb({});
+                    document.head.appendChild(s);
                     return;
                 }
+            }
 
-                showVerificationResult(data);
-            } catch (error) {
-                showError('Format data tidak valid. QR Code mungkin rusak.');
+            // default: tidak terkompres
+            cb(safeParse(decodeURIComponent(raw)) || {});
+        }
+
+        // Ganti placeholder halaman berdasarkan payload (mendukung flat & nested)
+        function renderFromPayload(p) {
+            const today = new Date();
+            const hari = today.toLocaleDateString('id-ID', { weekday: 'long' });
+            const tanggalLengkap = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const jamLengkap = today.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const tahun = today.getFullYear();
+            const bulanRomawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][today.getMonth()];
+            const bulanTeks = today.toLocaleDateString('id-ID', { month: 'long' });
+
+            // Deteksi format baru (punya 'version' atau objek 'pelapor/kehilangan')
+            const isNew = (typeof p === 'object' && (p.version || (p.pelapor || p.kehilangan)));
+
+            // Ambil field dengan fallback (new -> old -> default)
+            const pelapor = isNew ? (p.pelapor || {}) : p;
+            const kehilangan = isNew ? (p.kehilangan || {}) : {
+                surat: p.dokumen,
+                namapemilik: p.nama_pemilik,
+                nodokumen: p.nomor_dokumen || p.no_dokumen,
+                asaldokumen: p.tempat_terbit || p.asal_dokumen,
+                tempathilang: p.tempat_hilang,
+                detailperjalanan: p.detail_perjalanan,
+                tanggalhilang_iso: p.tanggal_hilang,
+                waktukehilangan: p.jam_hilang,
+                label_nomor: undefined
+            };
+            const petugas = isNew ? (p.petugas || {}) : {
+                nama: p.nama_petugas,
+                pangkat: p.pangkat,
+                nrp: p.nrp
+            };
+
+            const jenisDok = pick(kehilangan.surat, p.dokumen, '').toLowerCase();
+            const labelNomor = jenisDok.includes('ktp') ? 'NIK' : 'Nomor';
+
+            const nomorSurat = isNew
+                ? pick(p.surat && p.surat.nomor_full, p.nomor)
+                : p.nomor;
+
+            const tglHilangDisp = (() => {
+                const iso = isNew ? kehilangan.tanggalhilang_iso : p.tanggal_hilang;
+                if (!iso) return '-';
+                const d = new Date(iso);
+                return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            })();
+
+            const map = {
+                '\\[Nama Lengkap dari input pelapor\\]': val(pick(pelapor.nama, p.nama)),
+                '\\[Tempat, Tanggal Lahir dari input pelapor\\]': val(pick(pelapor.ttlp, pelapor.ttl, p.ttlp, p.ttl)),
+                '\\[Agama dari input pelapor\\]': val(pick(pelapor.agama, p.agama)),
+                '\\[Pekerjaan dari input pelapor\\]': val(pick(pelapor.pekerjaan, p.pekerjaan)),
+                '\\[Alamat Baris 1 dari input pelapor\\]': val(pick(pelapor.alamat1, p.alamat1)),
+                '\\[Alamat Baris 2 dari input pelapor\\]': val(pick(pelapor.alamat2, p.alamat2)),
+                '\\[NIK dari input pelapor\\]': val(pick(pelapor.nik, p.nik)),
+
+                '\\[jenis dokumen dari input form kehilangan\\]': val(pick(kehilangan.surat, p.dokumen)),
+                '\\[nama pemilik dokumen dari input form kehilangan\\]': val(pick(kehilangan.namapemilik, p.nama_pemilik, p.nama)),
+                '\\[label-nomor\\]': labelNomor,
+                '\\[nomor dokumen dari input form kehilangan\\]': val(pick(kehilangan.nodokumen, p.nomor_dokumen, p.no_dokumen)),
+                '\\[tempat diterbitkan dari input form kehilangan\\]': val(pick(kehilangan.asaldokumen, p.tempat_terbit, p.asal_dokumen)),
+                '\\[perkiraan tanggal hilang lengkap dengan hari\\]': tglHilangDisp,
+                '\\[perkiraan jam hilang\\]': val(pick(kehilangan.waktukehilangan, p.jam_hilang)),
+                '\\[perkiraan tempat kehilangan.*?\\]': (() => {
+                    const tempat = pick(kehilangan.tempathilang, p.tempat_hilang);
+                    const detail = pick(kehilangan.detailperjalanan, p.detail_perjalanan);
+                    if (tempat === 'Perjalanan') return tempat + ' ' + (detail || '');
+                    return val(tempat);
+                })(),
+
+                '\\[nomor dari input pelapor\\]': val(pick(nomorSurat, p.nomor, pelapor.nosurat)),
+                '\\[Nama Pelapor dari input pelapor\\]': val(pick(pelapor.nama, p.nama)),
+
+                '\\[bulan saat surat dibuat\\]': bulanTeks,
+                '\\[bulan saat surat dibuat dalam romawi\\]': bulanRomawi,
+                '\\[tahun saat surat dibuat\\]': tahun,
+                '\\[tahun surat dibuat\\]': tahun,
+                '\\[tanggal bulan tahun saat surat dibuat\\]': tanggalLengkap,
+                '\\[tanggal bulan tahun surat dibuat\\]': tanggalLengkap,
+                '\\[hari saat surat dibuat\\]': hari,
+                '\\[jam saat surat ini dibuat\\]': jamLengkap,
+
+                '\\[NRP\\]': val(pick(petugas.nrp, p.nrp)),
+                '\\[Pangkat\\]': val(pick(petugas.pangkat, p.pangkat)),
+                '\\[Nama\\s+Petugas\\]': val(pick(petugas.nama, p.nama_petugas))
+            };
+
+            let html = document.body.innerHTML;
+            for (const pattern in map) {
+                html = html.replace(new RegExp(pattern, 'g'), map[pattern]);
+            }
+            document.body.innerHTML = html;
+
+            // === QR preview: tampilkan URL verifikasi saat ini, perbesar & naikkan error correction ===
+            const qrCanvas = document.getElementById('qrCode');
+            if (qrCanvas && typeof QRious !== 'undefined') {
+                const overrideBase = localStorage.getItem('publicBaseUrl') || '';
+                const baseUrl = overrideBase || window.location.origin;
+                const verifyUrl = baseUrl + window.location.pathname + window.location.search;
+
+                // render tajam (DPR aware) & koreksi kesalahan tinggi
+                const dpr = Math.max(1, window.devicePixelRatio || 1);
+                const cssSize = 200;                     // tampil di layar
+                const pxSize = Math.round(cssSize * dpr); // resolusi fisik
+
+                qrCanvas.style.width = cssSize + 'px';
+                qrCanvas.style.height = cssSize + 'px';
+
+                new QRious({
+                    element: qrCanvas,
+                    value: verifyUrl,
+                    size: pxSize,
+                    level: 'H',
+                    background: 'white',
+                    foreground: '#000000'
+                });
             }
         }
 
-        function showVerificationResult(data) {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
+        window.onload = function () {
+            getPayload(function (payload) {
+                renderFromPayload(payload);
+            });
+        };
 
-            const statusBadge = document.getElementById('status-badge');
-            statusBadge.textContent = '✓ DOKUMEN ASLI';
-            statusBadge.className = 'status-badge status-valid';
-
-            const documentData = document.getElementById('document-data');
-            documentData.innerHTML = `
-        <div class="data-item">
-          <span class="data-label">Nomor Surat:</span>
-          <span class="data-value">${data.nomor || '-'}</span>
-        </div>
-        <div class="data-item">
-          <span class="data-label">Nama Pelapor:</span>
-          <span class="data-value">${data.nama || '-'}</span>
-        </div>
-        <div class="data-item">
-          <span class="data-label">NIK:</span>
-          <span class="data-value">${data.nik || '-'}</span>
-        </div>
-        <div class="data-item">
-          <span class="data-label">Jenis Dokumen:</span>
-          <span class="data-value">${data.dokumen || '-'}</span>
-        </div>
-        <div class="data-item">
-          <span class="data-label">Nomor Dokumen:</span>
-          <span class="data-value">${data.nomor_dokumen || '-'}</span>
-        </div>
-        <div class="data-item">
-          <span class="data-label">Tanggal Dikeluarkan:</span>
-          <span class="data-value">${data.tanggal || '-'}</span>
-        </div>
-      `;
-        }
-
-        function showError(message) {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('error-message').textContent = message;
-        }
-
-        // Initialize verification on page load
-        window.addEventListener('load', function () {
-            document.getElementById('loading').style.display = 'block';
-            setTimeout(verifyDocument, 1000); // Simulate processing time
+        // ESC untuk kembali
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') window.history.back();
         });
     </script>
+
 </body>
 
 </html>
