@@ -6,6 +6,7 @@
     <title>Verifikasi Surat Kehilangan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
     <style>
         /* === Gaya diadaptasi dari pr-kehil.html agar mirip hasil cetak === */
         @page {
@@ -356,19 +357,49 @@
         function val(v, f = '-') { return (v === undefined || v === null || v === '') ? f : String(v) }
         function pick(...args) { for (const a of args) { if (a !== undefined && a !== null && a !== '') return a } return '' }
 
-        // Ambil & decode payload (mendukung format lama & baru, serta kompres LZ jika dipakai)
+        // base64url -> Uint8Array (untuk codec=gz)
+        function base64UrlToU8(b64u) {
+            const b64 = (b64u || '').replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil((b64u || '').length / 4) * 4, '=');
+            const bin = atob(b64); const u8 = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+            return u8;
+        }
+
+        // Ambil & decode payload (mendukung plain, lz, gz)
         function getPayload(cb) {
             const raw = getQueryParam('data');
-            const codec = getQueryParam('codec'); // 'lz' jika kamu mengompres
+            const codec = getQueryParam('codec'); // 'gz' | 'lz' | undefined
             if (!raw) return cb({});
 
-            // jika pakai kompresi LZ, pastikan LZString ada
+            if (codec === 'gz') {
+                // butuh pako (inflateRaw)
+                if (window.pako) {
+                    try {
+                        const u8 = base64UrlToU8(raw);
+                        const txt = new TextDecoder().decode(pako.inflateRaw(u8));
+                        return cb(safeParse(txt) || {});
+                    } catch { return cb({}); }
+                } else {
+                    const s = document.createElement('script');
+                    s.src = "https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js";
+                    s.onload = () => {
+                        try {
+                            const u8 = base64UrlToU8(raw);
+                            const txt = new TextDecoder().decode(pako.inflateRaw(u8));
+                            cb(safeParse(txt) || {});
+                        } catch { cb({}); }
+                    };
+                    s.onerror = () => cb({});
+                    document.head.appendChild(s);
+                    return;
+                }
+            }
+
             if (codec === 'lz') {
                 if (window.LZString) {
                     const dec = window.LZString.decompressFromEncodedURIComponent(raw) || '';
                     return cb(safeParse(dec) || {});
                 } else {
-                    // muat LZString on-the-fly
                     const s = document.createElement('script');
                     s.src = "https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js";
                     s.onload = () => {
@@ -395,10 +426,8 @@
             const bulanRomawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][today.getMonth()];
             const bulanTeks = today.toLocaleDateString('id-ID', { month: 'long' });
 
-            // Deteksi format baru (punya 'version' atau objek 'pelapor/kehilangan')
             const isNew = (typeof p === 'object' && (p.version || (p.pelapor || p.kehilangan)));
 
-            // Ambil field dengan fallback (new -> old -> default)
             const pelapor = isNew ? (p.pelapor || {}) : p;
             const kehilangan = isNew ? (p.kehilangan || {}) : {
                 surat: p.dokumen,
@@ -477,18 +506,16 @@
             }
             document.body.innerHTML = html;
 
-            // === QR preview: tampilkan URL verifikasi saat ini, perbesar & naikkan error correction ===
+            // === QR preview: tampilkan URL verifikasi saat ini, perbesar & koreksi tinggi ===
             const qrCanvas = document.getElementById('qrCode');
             if (qrCanvas && typeof QRious !== 'undefined') {
                 const overrideBase = localStorage.getItem('publicBaseUrl') || '';
                 const baseUrl = overrideBase || window.location.origin;
                 const verifyUrl = baseUrl + window.location.pathname + window.location.search;
 
-                // render tajam (DPR aware) & koreksi kesalahan tinggi
                 const dpr = Math.max(1, window.devicePixelRatio || 1);
-                const cssSize = 200;                     // tampil di layar
-                const pxSize = Math.round(cssSize * dpr); // resolusi fisik
-
+                const cssSize = 80;
+                const pxSize = Math.round(cssSize * dpr);
                 qrCanvas.style.width = cssSize + 'px';
                 qrCanvas.style.height = cssSize + 'px';
 
@@ -514,6 +541,7 @@
             if (e.key === 'Escape') window.history.back();
         });
     </script>
+
 
 </body>
 

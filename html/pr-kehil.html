@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Surat F4 dengan Kop Surat</title>
   <style>
@@ -337,6 +339,13 @@
   </div>
 
   <script>
+    function u8ToBase64Url(u8) {
+      let bin = '';
+      for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+      return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+
     window.onload = function () {
       const pelapor = JSON.parse(localStorage.getItem('dataPelapor') || '{}');
       const hilang = JSON.parse(localStorage.getItem('dataKehilangan') || '{}');
@@ -464,30 +473,20 @@
       const baseUrl = overrideBase || window.location.origin;
       const verifyPath = '/verify.html'; // sesuaikan bila path beda
       const raw = JSON.stringify(qrData);
-      const packed = LZString.compressToEncodedURIComponent(raw);
+      const gz = pako.deflateRaw(new TextEncoder().encode(raw)); // Deflate tanpa header
+      const packed = u8ToBase64Url(gz);
 
+      // codec=gz agar verify tahu cara decode
+      const qrUrl = `https://simpas.netlify.app/html/verify.html?codec=gz&data=${packed}`;
 
-      const qrUrl = `https://simpas.netlify.app/html/verify.html?codec=lz&data=${packed}`;;
-
-      // ====== GENERATE QR ======
+      // ====== GENERATE QR (tetap) ======
       const qrCanvas = document.getElementById('qrCode');
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-
-      // target ukuran visual (CSS) 280px, tapi resolusi fisik dikali DPR
-      const cssSize = 150;
+      const cssSize = 80; // naikkan ke 200–280 kalau masih susah discan
       const pxSize = Math.round(cssSize * dpr);
-
       qrCanvas.style.width = cssSize + 'px';
       qrCanvas.style.height = cssSize + 'px';
-
-      new QRious({
-        element: qrCanvas,
-        value: qrUrl,           // tetap pakai url kamu
-        size: pxSize,           // resolusi tinggi
-        level: 'H',             // koreksi lebih tinggi
-        background: 'white',
-        foreground: '#000000'
-      });
+      new QRious({ element: qrCanvas, value: qrUrl, size: pxSize, level: 'H', background: 'white', foreground: '#000' });
 
     };
 
