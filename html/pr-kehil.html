@@ -241,16 +241,17 @@
           <p class="judul-utama">
             <strong>SURAT TANDA PENERIMAAN LAPORAN KEHILANGAN BARANG/SURAT</strong>
           </p>
-          <p>Nomor : STPLKB / C / [nomor dari input pelapor] / [bulan saat surat dibuat dalam romawi] / [tahun saat
-            surat dibuat] / POLSEK / SPKT</p>
+          <p>Nomor : STPLKB / C / [nomor dari input pelapor] / [bulan saat surat dibuat dalam romawi] /
+            [tahun_saat_surat_dibuat] / POLSEK / SPKT</p>
         </div>
       </div>
 
       <!-- Isi Surat -->
       <div class="isi-surat">
         <p>
-          Yang bertanda tangan di bawah ini, telah datang ke Kantor Kepolisian Sektor Arahan pada hari [hari saat surat
-          dibuat], tanggal [tanggal bulan tahun saat surat dibuat] pukul [jam saat surat ini dibuat] WIB seseorang yang
+          Yang bertanda tangan di bawah ini, telah datang ke Kantor Kepolisian Sektor Arahan pada hari
+          [hari_saat_surat_dibuat], tanggal [tanggal bulan tahun saat surat dibuat] pukul [jam saat surat ini dibuat]
+          WIB seseorang yang
           mengaku bernama :
         </p>
 
@@ -290,8 +291,8 @@
         <p>Melaporkan tentang kehilangan barang atau surat-surat penting berupa:</p>
 
         <p class="hanging-indent">
-          - <strong>1 (satu) buah/lembar [jenis dokumen dari input form kehilangan], A.n [nama pemilik dokumen dari
-            input form kehilangan], dengan [label-nomor] : [nomor dokumen dari input form kehilangan], dan yang
+          - <strong>1 (satu) buah/lembar [jenis dokumen dari input form kehilangan], A.n
+            [nama_pemilik_dokumen_dari_input_form_kehilangan], dengan [label-nomor] : [nomor_dokumen], dan yang
             dikeluarkan dari [tempat diterbitkan dari input form kehilangan].</strong>
         </p>
 
@@ -388,9 +389,9 @@
         .replace(/\[Alamat Baris 2 dari input pelapor\]/g, pelapor.alamat2 || '')
         .replace(/\[NIK dari input pelapor\]/g, pelapor.nik || '')
         .replace(/\[jenis dokumen dari input form kehilangan\]/g, hilang.surat || '')
-        .replace(/\[nama pemilik dokumen dari input form kehilangan\]/g, hilang.namapemilik || '')
+        .replace(/\[nama_pemilik_dokumen_dari_input_form_kehilangan\]/g, hilang.namapemilik || '')
         .replace(/\[label-nomor\]/g, labelNomor)
-        .replace(/\[nomor dokumen dari input form kehilangan\]/g, hilang.nodokumen || '')
+        .replace(/\[nomor_dokumen\]/g, hilang.nodokumen || '')
         .replace(/\[tempat diterbitkan dari input form kehilangan\]/g, hilang.asaldokumen || '')
         .replace(
           /\[perkiraan tanggal hilang lengkap dengan hari\]/g,
@@ -409,11 +410,11 @@
         .replace(/\[Nama Pelapor dari input pelapor\]/g, pelapor.nama || '')
         .replace(/\[bulan saat surat dibuat\]/g, bulanTeks)
         .replace(/\[bulan saat surat dibuat dalam romawi\]/g, bulanRomawi)
-        .replace(/\[tahun saat surat dibuat\]/g, tahun)
+        .replace(/\[tahun_saat_surat_dibuat\]/g, tahun)
         .replace(/\[tahun surat dibuat\]/g, tahun)
         .replace(/\[tanggal bulan tahun saat surat dibuat\]/g, tanggalText)
         .replace(/\[tanggal bulan tahun surat dibuat\]/g, tanggalText)
-        .replace(/\[hari saat surat dibuat\]/g, hari)
+        .replace(/\[hari_saat_surat_dibuat\]/g, hari)
         .replace(/\[jam saat surat ini dibuat\]/g, jamText);
 
       // ====== SUSUN PAYLOAD LENGKAP UNTUK QR ======
