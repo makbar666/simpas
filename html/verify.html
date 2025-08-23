@@ -354,9 +354,9 @@
                         <td style="width:40%;">Pelapor</td>
 
                         <!-- kolom qr sempit di tengah -->
-                        <td rowspan="2" style="width:40%; vertical-align: middle; text-align:center;">
-                            <canvas id="qrCode" style="display:block; margin:0 auto; background:#fff;"></canvas>
-                        </td>
+                        <!-- <td rowspan="2" style="width:40%; vertical-align: middle; text-align:center;">
+                            
+                        </td> -->
 
                         <!-- kolom petugas -->
                         <td style="width:40%;">
@@ -390,9 +390,13 @@
                 </div>
             </div>
         </div>
-        <div class="footer">
-            Dokumen/Surat ini Resmi dikeluarkan dari Kantor Kepolisian Sektor Arahan. Cek Legalitas dengan Memindai
-            QR Code di samping ini.
+        <div class="footer" style="display: flex; align-items: center; gap: 24px; font-size: 12px;">
+            <span>
+                Dokumen/Surat ini Resmi dikeluarkan dari Kantor Kepolisian Sektor Arahan. Cek Legalitas dengan Memindai
+                QR Code di samping ini.
+            </span>
+            <canvas id="qrCode"
+                style="display:block; margin:0 auto; background:#fff; width:60px; height:60px;"></canvas>
         </div>
     </div>
 
