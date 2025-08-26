@@ -15,22 +15,6 @@
       margin: 20mm;
     }
 
-    /* Watermark DRAFT */
-    .page::before {
-      content: "DRAFT";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-30deg);
-      font-size: 120px;
-      font-weight: bold;
-      color: rgba(200, 0, 0, 0.15);
-      /* merah transparan */
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 0;
-    }
-
     body {
       font-family: "Tahoma", sans-serif;
       font-size: 13px;
@@ -217,10 +201,39 @@
       color: #000;
       font-style: italic;
     }
+
+    .print-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s;
+      z-index: 9999;
+    }
+
+    .print-button:hover {
+      background: #0056b3;
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <button class="print-button" onclick="window.print()">🖨 Print</button>
+
   <div class="page">
     <div class="container" id="surat">
       <!-- Kop Surat -->
