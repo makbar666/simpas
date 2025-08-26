@@ -15,6 +15,22 @@
       margin: 20mm;
     }
 
+    /* Watermark DRAFT */
+    .page::before {
+      content: "DRAFT";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 120px;
+      font-weight: bold;
+      color: rgba(200, 0, 0, 0.15);
+      /* merah transparan */
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+    }
+
     body {
       font-family: "Tahoma", sans-serif;
       font-size: 13px;
@@ -29,8 +45,10 @@
       min-height: 330mm;
       margin: auto;
       padding: 10mm 20mm 20mm 20mm;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 10px rgba(0, 0, 0, .3);
       box-sizing: border-box;
+      position: relative;
+      /* Tambahkan ini */
     }
 
     .container {
@@ -335,19 +353,22 @@
           Keterangan ini berlaku selama 14 (empat belas) hari sejak dikeluarkan.
 
           <!-- QR Code Section -->
-          <div style="margin-top: 40px; text-align: center;">
+          <!-- <div style="margin-top: 40px; text-align: center;">
             <p style="font-size: 12px; margin-bottom: 10px;"><strong>Verifikasi Keaslian Dokumen</strong></p>
             <canvas id="qrCode" style="display:block; margin:16px auto; background:#fff"></canvas>
 
             <p style="font-size: 10px; margin-top: 5px;">Scan QR Code untuk verifikasi keaslian dokumen ini</p>
-          </div>
+          </div> -->
         </div>
 
       </div>
     </div>
-    <div class="footer">
-      Dokumen/Surat ini Resmi dikeluarkan dari Kantor Kepolisian Sektor Arahan. Cek Legalitas dengan Memindai
-      QR Code di samping ini.
+    <div class="footer" style="display: flex; align-items: center; gap: 24px; font-size: 12px;">
+      <span>
+        Dokumen/Surat ini Resmi dikeluarkan dari Kantor Kepolisian Sektor Arahan. Cek Legalitas dengan Memindai
+        QR Code di samping ini.
+      </span>
+      <canvas id="qrCode" style="display:block; margin:0 auto; background:#fff; width:60px; height:60px;"></canvas>
     </div>
   </div>
 
@@ -513,7 +534,7 @@
       // === render QR (tetap) ===
       const qrCanvas = document.getElementById('qrCode');
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const cssSize = 150;              // boleh 150–200px; kalau mau sangat kecil, naikkan koreksi 'H' & jaga quiet zone
+      const cssSize = 130;              // boleh 150–200px; kalau mau sangat kecil, naikkan koreksi 'H' & jaga quiet zone
       const pxSize = Math.round(cssSize * dpr);
       qrCanvas.style.width = cssSize + 'px';
       qrCanvas.style.height = cssSize + 'px';
