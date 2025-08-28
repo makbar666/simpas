@@ -52,3 +52,22 @@ ipcMain.handle('login', async (_, { nrp, password }) => {
     });
   });
 });
+
+// ——— tambahkan di bawah handler 'login' ———
+ipcMain.handle('get-users', async () => {
+  return new Promise((resolve, reject) => {
+    db.all(
+      `SELECT id, nama, pangkat, jabatan, nrp, akses FROM users ORDER BY id DESC`,
+      [],
+      (err, rows) => {
+        if (err) return reject(err.message);
+        // Ubah akses string "A,B,C" → array ["A","B","C"]
+        const mapped = rows.map(r => ({
+          ...r,
+          akses: (r.akses || '').split(',').filter(Boolean),
+        }));
+        resolve(mapped);
+      }
+    );
+  });
+});

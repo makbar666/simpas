@@ -454,7 +454,13 @@
                     tanggalhilang_iso: p.k?.ti || null,
                     waktukehilangan: p.k?.wk || '',
                     label_nomor: p.k?.ln || 'Nomor'
+                },
+                petugas: {
+                    nama: p.t?.n || '',
+                    pangkat: p.t?.pk || '',
+                    nrp: p.t?.nr || ''
                 }
+
             };
         }
 
@@ -533,11 +539,24 @@
                 waktukehilangan: p.jam_hilang,
                 label_nomor: undefined
             };
-            const petugas = isNew ? (p.petugas || {}) : {
+            let petugas = isNew ? (p.petugas || {}) : {
                 nama: p.nama_petugas,
                 pangkat: p.pangkat,
                 nrp: p.nrp
             };
+
+            // Fallback dari pilihan di form (localStorage)
+            try {
+                const ttdLocal = JSON.parse(localStorage.getItem('ttdAnggota') || 'null');
+                if (ttdLocal) {
+                    petugas = {
+                        nama: pick(petugas.nama, ttdLocal.nama),
+                        pangkat: pick(petugas.pangkat, ttdLocal.pangkat),
+                        nrp: pick(petugas.nrp, ttdLocal.nrp)
+                    };
+                }
+            } catch (_) { }
+
 
             const jenisDok = pick(kehilangan.surat, p.dokumen, '').toLowerCase();
             const labelNomor = jenisDok.includes('ktp') ? 'NIK' : 'Nomor';
@@ -591,6 +610,7 @@
                 '\\[NRP\\]': val(pick(petugas.nrp, p.nrp)),
                 '\\[Pangkat\\]': val(pick(petugas.pangkat, p.pangkat)),
                 '\\[Nama\\s+Petugas\\]': val(pick(petugas.nama, p.nama_petugas))
+
             };
 
             let html = document.body.innerHTML;

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,33 +12,39 @@
       background-color: #2b4641;
       color: #fff;
     }
+
     h2 {
       text-align: center;
       color: #fff;
       margin-bottom: 20px;
     }
+
     form {
       background: #1e3632;
       max-width: 700px;
       margin: 0 auto 30px;
       padding: 20px 30px;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
     .form-container {
       display: flex;
       gap: 40px;
       flex-wrap: wrap;
     }
+
     .input-section {
       flex: 1 1 300px;
     }
+
     label {
       display: block;
       margin-top: 15px;
       font-weight: 600;
       color: #fff;
     }
+
     input[type="text"] {
       width: 100%;
       padding: 8px 10px;
@@ -48,6 +55,7 @@
       font-size: 14px;
       color: #333;
     }
+
     fieldset {
       flex: 1 1 300px;
       margin-top: 0;
@@ -58,21 +66,25 @@
       height: fit-content;
       color: #fff;
     }
+
     legend {
       font-weight: bold;
       padding: 0 5px;
       font-size: 1.1em;
     }
+
     input[type="checkbox"] {
       margin-right: 8px;
       transform: scale(1.1);
       vertical-align: middle;
       cursor: pointer;
     }
-    label > input[type="checkbox"] {
+
+    label>input[type="checkbox"] {
       vertical-align: middle;
       cursor: pointer;
     }
+
     .button-group {
       margin-top: 25px;
       display: flex;
@@ -80,6 +92,7 @@
       justify-content: flex-start;
       flex-wrap: wrap;
     }
+
     button {
       padding: 10px 22px;
       font-size: 15px;
@@ -90,20 +103,25 @@
       transition: background-color 0.3s ease;
       color: white;
     }
+
     button[type="button"] {
       background-color: #d62828;
     }
+
     button[type="button"]:hover {
       background-color: #771717;
     }
+
     button[type="submit"] {
       background-color: #028a0f;
     }
+
     button[type="submit"]:hover {
       background-color: #015509;
     }
   </style>
 </head>
+
 <body>
   <h2>Form Tambah Anggota</h2>
   <form id="form-anggota">
@@ -128,11 +146,15 @@
       <fieldset>
         <legend>Pilih Akses:</legend>
         <label><input type="checkbox" name="akses_menu" value="SURAT KEHILANGAN" /> SURAT KEHILANGAN</label><br />
-        <label><input type="checkbox" name="akses_menu" value="SURAT KEHILANGAN STNK" /> SURAT KEHILANGAN STNK</label><br />
-        <label><input type="checkbox" name="akses_menu" value="SURAT IZIN KERAMAIAN" /> SURAT IZIN KERAMAIAN</label><br />
-        <label><input type="checkbox" name="akses_menu" value="SURAT IZIN KERAMAIAN TTE" /> SURAT IZIN KERAMAIAN TTE</label><br />
+        <label><input type="checkbox" name="akses_menu" value="SURAT KEHILANGAN STNK" /> SURAT KEHILANGAN
+          STNK</label><br />
+        <label><input type="checkbox" name="akses_menu" value="SURAT IZIN KERAMAIAN" /> SURAT IZIN
+          KERAMAIAN</label><br />
+        <label><input type="checkbox" name="akses_menu" value="SURAT IZIN KERAMAIAN TTE" /> SURAT IZIN KERAMAIAN
+          TTE</label><br />
         <label><input type="checkbox" name="akses_menu" value="SURAT IZIN JALAN" /> SURAT IZIN JALAN</label><br />
-        <label><input type="checkbox" name="akses_menu" value="SURAT IZIN JALAN TTE" /> SURAT IZIN JALAN TTE</label><br />
+        <label><input type="checkbox" name="akses_menu" value="SURAT IZIN JALAN TTE" /> SURAT IZIN JALAN
+          TTE</label><br />
       </fieldset>
     </div>
 
@@ -140,6 +162,31 @@
       <button type="button" onclick="window.location.href='index.html'">KEMBALI</button>
       <button type="submit">SIMPAN</button>
     </div>
+
+    <h2>Daftar Anggota</h2>
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 6px;">
+        <input id="searchBox" type="text" placeholder="Cari nama/pangkat/jabatan/NRP…"
+          style="flex:1;padding:8px 10px;border-radius:4px;border:1px solid #ccc;color:#333;max-width:360px;">
+        <small id="rowCount" style="margin-left:12px;opacity:.8;"></small>
+      </div>
+      <div style="overflow:auto;border-radius:6px;border:1px solid #4a7c73;">
+        <table id="tblUsers" style="width:100%;border-collapse:collapse;min-width:800px;">
+          <thead style="background:#265b53;">
+            <tr>
+              <th style="text-align:left;padding:10px 12px;">#</th>
+              <th style="text-align:left;padding:10px 12px;">Nama</th>
+              <th style="text-align:left;padding:10px 12px;">Pangkat</th>
+              <th style="text-align:left;padding:10px 12px;">Jabatan</th>
+              <th style="text-align:left;padding:10px 12px;">NRP</th>
+              <th style="text-align:left;padding:10px 12px;">Akses</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
   </form>
 
   <script>
@@ -160,11 +207,72 @@
         if (res.success) {
           alert("Anggota berhasil disimpan.");
           document.getElementById("form-anggota").reset();
+          await loadUsers(); // <— tambah ini
+
         }
       } catch (err) {
         alert("Gagal menyimpan anggota: " + err);
       }
     });
+
+    // ——— STATE ———
+    let ALL_USERS = [];
+
+    // ——— RENDER TABLE ———
+    function renderTable(rows) {
+      const tbody = document.querySelector('#tblUsers tbody');
+      tbody.innerHTML = '';
+      rows.forEach((u, idx) => {
+        const tr = document.createElement('tr');
+        tr.style.background = idx % 2 ? '#1e3632' : '#234a44';
+        tr.innerHTML = `
+        <td style="padding:10px 12px;">${idx + 1}</td>
+        <td style="padding:10px 12px;">${u.nama ?? ''}</td>
+        <td style="padding:10px 12px;">${u.pangkat ?? ''}</td>
+        <td style="padding:10px 12px;">${u.jabatan ?? ''}</td>
+        <td style="padding:10px 12px;">${u.nrp ?? ''}</td>
+        <td style="padding:10px 12px;">${Array.isArray(u.akses) ? u.akses.join(', ') : (u.akses || '')}</td>
+      `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('rowCount').textContent = `${rows.length} baris`;
+    }
+
+    // ——— FILTER / SEARCH ———
+    function applySearch() {
+      const q = (document.getElementById('searchBox').value || '').toLowerCase();
+      if (!q) return renderTable(ALL_USERS);
+      const filtered = ALL_USERS.filter(u => {
+        const text = [
+          u.nama, u.pangkat, u.jabatan, u.nrp,
+          (Array.isArray(u.akses) ? u.akses.join(' ') : u.akses)
+        ].join(' ').toLowerCase();
+        return text.includes(q);
+      });
+      renderTable(filtered);
+    }
+
+    document.getElementById('searchBox').addEventListener('input', applySearch);
+
+    // ——— LOAD USERS ———
+    async function loadUsers() {
+      try {
+        const rows = await window.electronAPI.getUsers();
+        ALL_USERS = Array.isArray(rows) ? rows : [];
+        renderTable(ALL_USERS);
+      } catch (e) {
+        console.error('Gagal memuat users:', e);
+        alert('Gagal memuat data anggota.');
+      }
+    }
+
+    // ——— RELOAD TABLE setelah simpan ———
+    // Tambahkan di akhir handler submit yang sudah ada:
+    //   if (res.success) { ... await loadUsers(); }
+
+    // Panggil saat halaman siap
+    document.addEventListener('DOMContentLoaded', loadUsers);
   </script>
 </body>
+
 </html>

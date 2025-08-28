@@ -141,9 +141,8 @@
         <div>
           <label for="pilihttd">Pilih Anggota Penanda Tangan</label>
           <input type="text" id="pilihttd" name="pilihttd" placeholder="Silahkan Pilih" list="ttdanggota">
-          <datalist>
-            <option value="[ambil dari database anggota]"></option>
-          </datalist>
+          <datalist id="ttdanggota"></datalist>
+
         </div>
 
       </form>
@@ -161,34 +160,94 @@
   </footer>
 
   <script>
-    // Tampilkan input detail perjalanan jika "Perjalanan" dipilih
-    document.getElementById('tempathilang').addEventListener('input', function () {
-      const formPerjalanan = document.getElementById('form-perjalanan');
-      if (this.value.trim().toLowerCase() === 'perjalanan') {
-        formPerjalanan.style.display = 'flex';
-        formPerjalanan.style.flexDirection = 'column';
+    // --- LOAD LIST ANGGOTA KE <datalist> ---
+    async function loadAnggotaTTD() {
+      const dl = document.getElementById('ttdanggota');
+      if (!dl) return;
+
+      dl.innerHTML = '';
+      try {
+        // Ambil dari IPC (pastikan preload expose: window.electronAPI.getUsers)
+        const users = await window.electronAPI.getUsers();
+
+        (users || []).forEach(u => {
+          const opt = document.createElement('option');
+          // Tampilkan ringkas: Nama — Pangkat (NRP)
+          opt.value = `${u.nama || ''}${u.pangkat ? ' — ' + u.pangkat : ''}${u.nrp ? ' (' + u.nrp + ')' : ''}`;
+          // simpan data penting di data-*
+          opt.dataset.userId = u.id ?? '';
+          opt.dataset.nama = u.nama ?? '';
+          opt.dataset.pangkat = u.pangkat ?? '';
+          opt.dataset.jabatan = u.jabatan ?? '';
+          opt.dataset.nrp = u.nrp ?? '';
+          dl.appendChild(opt);
+        });
+      } catch (err) {
+        console.error('Gagal memuat anggota TTD:', err);
+        alert('Gagal memuat daftar anggota penanda tangan.');
+      }
+    }
+
+    // --- SIMPAN PILIHAN KE localStorage (agar dipakai halaman cetak) ---
+    const inputTTD = document.getElementById('pilihttd');
+    inputTTD.addEventListener('change', () => {
+      const val = inputTTD.value;
+      const opts = document.querySelectorAll('#ttdanggota option');
+      let found = null;
+      for (const o of opts) {
+        if (o.value === val) { found = o; break; }
+      }
+      if (found) {
+        const picked = {
+          id: found.dataset.userId,
+          nama: found.dataset.nama,
+          pangkat: found.dataset.pangkat,
+          jabatan: found.dataset.jabatan,
+          nrp: found.dataset.nrp
+        };
+        localStorage.setItem('ttdAnggota', JSON.stringify(picked));
       } else {
-        formPerjalanan.style.display = 'none';
+        // Jika user mengetik bebas & tidak cocok dengan option
+        localStorage.removeItem('ttdAnggota');
       }
     });
 
-    document.getElementById('btnPrint').addEventListener('click', function () {
-      const dataKehilangan = {
-        surat: document.getElementById('surat').value,
-        namapemilik: document.getElementById('namapemilik').value,
-        nodokumen: document.getElementById('nodokumen').value,
-        asaldokumen: document.getElementById('asaldokumen').value,
-        tanggalhilang: document.getElementById('tanggalhilang').value,
-        tempathilang: document.getElementById('tempathilang').value,
-        detailperjalanan: document.getElementById('detailperjalanan').value,
-        waktukehilangan: document.getElementById('waktukehilangan').value
-      };
-      localStorage.setItem('dataKehilangan', JSON.stringify(dataKehilangan));
-      localStorage.setItem('autoPrint', 'true'); // trigger untuk halaman cetak
-      window.location.href = 'pr-kehil.html';
-    });
+    // --- Panggil saat halaman siap ---
+    document.addEventListener('DOMContentLoaded', loadAnggotaTTD);
 
+    // --- Tambah ke handler PRINT yang sudah ada ---
+    // (Tinggal biarkan seperti semula; kita hanya tambahkan simpan ttdAnggota bila ada)
+    const oldBtnPrintHandler = document.getElementById('btnPrint').onclick;
+    document.getElementById('btnPrint').onclick = function () {
+      // simpan juga TTD kalau ada
+      const ttd = localStorage.getItem('ttdAnggota');
+      if (ttd) {
+        // sisipkan ke dataKehilangan yang disimpan / atau biarkan sebagai key terpisah
+        // kita simpan terpisah agar halaman 'pr-kehil.html' fleksibel membacanya
+        localStorage.setItem('ttdAnggota', ttd);
+      }
+      // jalankan logic lama
+      if (typeof oldBtnPrintHandler === 'function') {
+        oldBtnPrintHandler();
+      } else {
+        // fallback ke handler default yang ada di file ini
+        const dataKehilangan = {
+          surat: document.getElementById('surat').value,
+          namapemilik: document.getElementById('namapemilik').value,
+          nodokumen: document.getElementById('nodokumen').value,
+          asaldokumen: document.getElementById('asaldokumen').value,
+          tanggalhilang: document.getElementById('tanggalhilang').value,
+          tempathilang: document.getElementById('tempathilang').value,
+          detailperjalanan: document.getElementById('detailperjalanan').value,
+          waktukehilangan: document.getElementById('waktukehilangan').value
+        };
+        localStorage.setItem('dataKehilangan', JSON.stringify(dataKehilangan));
+        localStorage.setItem('autoPrint', 'true');
+        window.location.href = 'pr-kehil.html';
+      }
+    };
   </script>
+
 </body>
 
 </html>

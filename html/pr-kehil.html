@@ -259,7 +259,7 @@
             <tr>
               <td>Tahun</td>
               <td>:</td>
-              <td>[tahun saat surat dibuat]</td>
+              <td>[tahun surat dibuat]</td>
             </tr>
           </table>
         </div>
@@ -386,10 +386,14 @@
   </div>
 
   <script>
+
+
     function u8ToBase64Url(u8) {
       let bin = ''; for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
       return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
+
+
 
 
     window.onload = function () {
@@ -400,6 +404,20 @@
         alert("Data tidak lengkap. Silakan isi form pelapor dan kehilangan terlebih dahulu.");
         window.location.href = "input-pelapor.html";
         return;
+      }
+
+      // ====== DATA PETUGAS TTD DARI localStorage ======
+      const ttdRaw = localStorage.getItem('ttdAnggota');
+      let petugasNama = pelapor.nama_petugas || '';
+      let petugasPangkat = pelapor.pangkat || '';
+      let petugasNrp = pelapor.nrp || '';
+      if (ttdRaw) {
+        try {
+          const t = JSON.parse(ttdRaw);
+          petugasNama = t.nama || petugasNama;
+          petugasPangkat = t.pangkat || petugasPangkat;
+          petugasNrp = t.nrp || petugasNrp;
+        } catch (_) { }
       }
 
       // ====== META WAKTU ======
@@ -413,7 +431,7 @@
 
       const labelNomor = (hilang.surat || '').toLowerCase().includes('ktp') ? 'NIK' : 'Nomor';
 
-      // ====== RENDER PLACEHOLDER KE DOKUMEN CETAK (seperti sebelumnya) ======
+      // ====== RENDER PLACEHOLDER KE DOKUMEN CETAK ======
       document.body.innerHTML = document.body.innerHTML
         .replace(/\[Nama Lengkap dari input pelapor\]/g, pelapor.nama || '')
         .replace(/\[Tempat, Tanggal Lahir dari input pelapor\]/g, pelapor.ttlp || '')
@@ -427,18 +445,17 @@
         .replace(/\[label-nomor\]/g, labelNomor)
         .replace(/\[nomor_dokumen\]/g, hilang.nodokumen || '')
         .replace(/\[tempat diterbitkan dari input form kehilangan\]/g, hilang.asaldokumen || '')
-        .replace(
-          /\[perkiraan tanggal hilang lengkap dengan hari\]/g,
+        .replace(/\[perkiraan tanggal hilang lengkap dengan hari\]/g,
           hilang.tanggalhilang
             ? new Date(hilang.tanggalhilang).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
             : ''
         )
         .replace(/\[perkiraan jam hilang\]/g, hilang.waktukehilangan || '')
-        .replace(
-          /\[perkiraan tempat kehilangan.*?\]/g,
+        .replace(/\[perkiraan tempat kehilangan.*?\]/g,
           (hilang.tempathilang === "Perjalanan"
             ? (hilang.tempathilang + ' ' + (hilang.detailperjalanan || ''))
-            : (hilang.tempathilang || ''))
+            : (hilang.tempathilang || '')
+          )
         )
         .replace(/\[nomor dari input pelapor\]/g, pelapor.nosurat || '')
         .replace(/\[Nama Pelapor dari input pelapor\]/g, pelapor.nama || '')
@@ -449,26 +466,22 @@
         .replace(/\[tanggal bulan tahun saat surat dibuat\]/g, tanggalText)
         .replace(/\[tanggal bulan tahun surat dibuat\]/g, tanggalText)
         .replace(/\[hari_saat_surat_dibuat\]/g, hari)
+        .replace(/\[Nama\s*Petugas\]/g, petugasNama || '')
+        .replace(/\[Pangkat\]/g, petugasPangkat || '')
+        .replace(/\[NRP\]/g, petugasNrp || '')
         .replace(/\[jam saat surat ini dibuat\]/g, jamText);
 
       // ====== SUSUN PAYLOAD LENGKAP UNTUK QR ======
       const nomorFull = `STPLKB/C/${pelapor.nosurat || ''}/${bulanRomawi}/${tahun}/POLSEK/SPKT`;
-
-      // Normalisasi tanggal hilang (ISO) bila ada
       const tanggalHilangISO = hilang.tanggalhilang ? new Date(hilang.tanggalhilang).toISOString() : null;
 
       const qrData = {
-        version: 1,                  // untuk kompatibilitas ke depan
+        version: 1,
         jenis: 'surat_kehilangan',
-
         meta: {
           dibuat_pada: now.toISOString(),
-          hari: hari,
-          tanggal_teks: tanggalText,
-          jam_teks: jamText,
-          tahun: tahun,
-          bulan_romawi: bulanRomawi,
-          bulan_teks: bulanTeks,
+          hari, tanggal_teks: tanggalText, jam_teks: jamText,
+          tahun, bulan_romawi: bulanRomawi, bulan_teks: bulanTeks,
           penerbit: {
             polda: "POLDA JAWA BARAT",
             polres: "RESOR INDRAMAYU",
@@ -477,47 +490,30 @@
             model: "C"
           }
         },
-
-        surat: {
-          nomor_full: nomorFull,
-          catatan_masa_berlaku_hari: 14
-        },
-
+        surat: { nomor_full: nomorFull, catatan_masa_berlaku_hari: 14 },
         pelapor: {
-          nama: pelapor.nama || '',
-          ttlp: pelapor.ttlp || '',
-          agama: pelapor.agama || '',
-          pekerjaan: pelapor.pekerjaan || '',
-          alamat1: pelapor.alamat1 || '',
-          alamat2: pelapor.alamat2 || '',
-          nik: pelapor.nik || '',
-          nosurat: pelapor.nosurat || ''
+          nama: pelapor.nama || '', ttlp: pelapor.ttlp || '',
+          agama: pelapor.agama || '', pekerjaan: pelapor.pekerjaan || '',
+          alamat1: pelapor.alamat1 || '', alamat2: pelapor.alamat2 || '',
+          nik: pelapor.nik || '', nosurat: pelapor.nosurat || ''
         },
-
         kehilangan: {
-          surat: hilang.surat || '',
-          namapemilik: hilang.namapemilik || '',
-          nodokumen: hilang.nodokumen || '',
-          asaldokumen: hilang.asaldokumen || '',
-          tempathilang: hilang.tempathilang || '',
-          detailperjalanan: hilang.detailperjalanan || '',
-          tanggalhilang_iso: tanggalHilangISO,
-          waktukehilangan: hilang.waktukehilangan || '',
+          surat: hilang.surat || '', namapemilik: hilang.namapemilik || '',
+          nodokumen: hilang.nodokumen || '', asaldokumen: hilang.asaldokumen || '',
+          tempathilang: hilang.tempathilang || '', detailperjalanan: hilang.detailperjalanan || '',
+          tanggalhilang_iso: tanggalHilangISO, waktukehilangan: hilang.waktukehilangan || '',
           label_nomor: labelNomor
         },
-
-        // Opsi identitas petugas (isi bila kamu simpan di localStorage juga)
-        petugas: {
-          nama: pelapor.nama_petugas || '',
-          pangkat: pelapor.pangkat || '',
-          nrp: pelapor.nrp || ''
+        petugas: { // ikut disimpan juga (versi verbose)
+          nama: petugasNama || '', pangkat: petugasPangkat || '', nrp: petugasNrp || ''
         }
       };
 
-      // ====== BANGUN URL VERIFIKASI ======
+      // ====== BANGUN URL VERIFIKASI (schema v2 kompak + petugas) ======
       const overrideBase = localStorage.getItem('publicBaseUrl') || '';
       const baseUrl = overrideBase || window.location.origin;
-      const verifyPath = '/verify.html'; // sesuaikan bila path beda
+
+      // v2 dengan tambahan t:{n,pk,nr} untuk petugas
       const payloadV2 = {
         v: 2,
         s: { nf: nomorFull, vb: 14 },
@@ -532,28 +528,30 @@
           dp: hilang.detailperjalanan || '', ti: tanggalHilangISO, wk: hilang.waktukehilangan || '',
           ln: labelNomor
         },
-        m: { hr: hari, tg: tanggalText, jm: jamText, th: tahun, br: bulanRomawi, bt: bulanTeks }
+        m: { hr: hari, tg: tanggalText, jm: jamText, th: tahun, br: bulanRomawi, bt: bulanTeks },
+        t: { n: petugasNama || '', pk: petugasPangkat || '', nr: petugasNrp || '' } // <— PETUGAS
       };
 
-      // === KOMPRESI: deflateRaw level 9 + base64url ===
+      // KOMPRESI (deflateRaw) + base64url
       const raw = JSON.stringify(payloadV2);
       const u8 = new TextEncoder().encode(raw);
-      const gz = pako.deflateRaw(u8, { level: 9 }); // level maks
+      const gz = pako.deflateRaw(u8, { level: 9 });
       const packed = u8ToBase64Url(gz);
 
-      // === URL VERIFIKASI SUPER PENDEK ===
+      // URL verifikasi (sesuaikan path verify bila beda)
+      // URL verifikasi FIXED
       const qrUrl = `https://simpas.netlify.app/html/verify.html?codec=gz&data=${packed}`;
 
-      // === render QR (tetap) ===
+      // Render QR
       const qrCanvas = document.getElementById('qrCode');
       const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const cssSize = 130;              // boleh 150–200px; kalau mau sangat kecil, naikkan koreksi 'H' & jaga quiet zone
+      const cssSize = 130;
       const pxSize = Math.round(cssSize * dpr);
       qrCanvas.style.width = cssSize + 'px';
       qrCanvas.style.height = cssSize + 'px';
       new QRious({ element: qrCanvas, value: qrUrl, size: pxSize, level: 'H', background: 'white', foreground: '#000' });
-
     };
+
 
     // Esc untuk kembali ke form
     document.addEventListener('keydown', function (e) {
