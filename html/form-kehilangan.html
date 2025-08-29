@@ -218,7 +218,7 @@
     // --- Tambah ke handler PRINT yang sudah ada ---
     // (Tinggal biarkan seperti semula; kita hanya tambahkan simpan ttdAnggota bila ada)
     const oldBtnPrintHandler = document.getElementById('btnPrint').onclick;
-    document.getElementById('btnPrint').onclick = function () {
+    document.getElementById('btnPrint').onclick = async function () {
       // simpan juga TTD kalau ada
       const ttd = localStorage.getItem('ttdAnggota');
       if (ttd) {
@@ -230,6 +230,33 @@
       if (typeof oldBtnPrintHandler === 'function') {
         oldBtnPrintHandler();
       } else {
+
+        try {
+          const pelapor = JSON.parse(localStorage.getItem('dataPelapor') || '{}'); // berisi nosurat & nama (dari halaman pelapor)
+          const ttd = JSON.parse(localStorage.getItem('ttdAnggota') || 'null');    // dipilih di halaman ini
+          const jenis = document.getElementById('surat').value || '';             // jenis dokumen/surat
+          const today = new Date();
+          const tanggalISO = today.toISOString().slice(0, 10);                    // YYYY-MM-DD
+
+          const payload = {
+            no_surat: pelapor.nosurat || '',              // dari input-pelapor.html
+            nama_pelapor: pelapor.nama || '',             // dari input-pelapor.html
+            tanggal_laporan: tanggalISO,                  // atau ganti dengan field yang kamu inginkan
+            jenis: jenis,
+            anggota_penanda_tangan: ttd ? (ttd.nama || '') : (document.getElementById('pilihttd').value || '')
+          };
+
+          // Simpan ringkas ke DB
+          await window.electronAPI.simpanKehilangan(payload);
+
+          // (Opsional) cek hasil
+          // const rows = await window.electronAPI.getKehilangan();
+          // console.log('KEHILANGAN TERAKHIR:', rows[0]);
+
+        } catch (e) {
+          console.error('Gagal simpan ringkas kehilangan:', e);
+          alert('Gagal simpan ringkas kehilangan.');
+        }
         // fallback ke handler default yang ada di file ini
         const dataKehilangan = {
           surat: document.getElementById('surat').value,

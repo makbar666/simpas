@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rekap Surat Kehilangan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Poppins, sans-serif;
+            background-color: #2b4641;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: #00332c;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fcb035;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background-color: #014d3b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .chart-box {
+            position: relative;
+            height: 300px;
+            /* tinggi chart fix */
+            width: 100%;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .actions input {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+            flex: 1;
+        }
+
+        .actions button {
+            background-color: #028a0f;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .actions button:hover {
+            background-color: #026b0b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        thead th {
+            background-color: #00332c;
+            color: #fcb035;
+            text-align: left;
+            padding: 10px;
+            position: sticky;
+            top: 0;
+        }
+
+        tbody td {
+            padding: 10px;
+            border-bottom: 1px solid #446b64;
+        }
+
+        tbody tr:hover {
+            background-color: #205b4f;
+        }
+
+        footer {
+            background-color: #00332c;
+            text-align: left;
+            padding: 5px 15px;
+            font-weight: bold;
+            font-size: 10px;
+            color: #fcb035;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Rekap Surat Kehilangan</h1>
+        <div class="actions">
+            <input id="q" type="search" placeholder="Cari no surat / nama / jenis / anggota…" />
+            <button id="btnRefresh">↻ Refresh</button>
+            <button id="btnKembali">Kembali</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Chart -->
+        <section class="card">
+            <div class="chart-box">
+                <canvas id="chartWeekly"></canvas>
+            </div>
+        </section>
+
+        <!-- Table -->
+        <section class="card">
+            <table id="tbl">
+                <thead>
+                    <tr>
+                        <th>No. Surat</th>
+                        <th>Nama Pelapor</th>
+                        <th>Tanggal Laporan</th>
+                        <th>Jenis</th>
+                        <th>Anggota Penanda Tangan</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    <tr>
+                        <td colspan="5">Memuat data…</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2025 - Sistem Informasi Surat Kehilangan
+    </footer>
+
+    <script>
+        let CHART;
+        let RAW_ROWS = [];
+
+        const $btnKembali = document.getElementById('btnKembali');
+        $btnKembali.addEventListener('click', () => window.location.href = 'index.html');
+
+        function fmtID(d) {
+            if (!d) return '';
+            const dt = new Date(d);
+            return dt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function startOfWeek(date) {
+            const d = new Date(date);
+            const day = d.getDay(); // 0=Sun
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+        function labelWeekRange(date) {
+            const s = startOfWeek(date);
+            const e = new Date(s);
+            e.setDate(s.getDate() + 6);
+            return `${s.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })} - ${e.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}`;
+        }
+
+        async function bootstrap() {
+            const rows = await window.electronAPI.getKehilangan();
+            RAW_ROWS = rows || [];
+            renderTable(RAW_ROWS);
+            renderChartWeekly(RAW_ROWS);
+        }
+
+        function renderTable(rows) {
+            const q = document.getElementById('q').value.toLowerCase();
+            const data = !q ? rows : rows.filter(r =>
+                [r.no_surat, r.nama_pelapor, r.jenis, r.anggota_penanda_tangan]
+                    .some(v => v && v.toLowerCase().includes(q))
+            );
+            const html = data.map(r => `
+      <tr>
+        <td>${r.no_surat}</td>
+        <td>${r.nama_pelapor}</td>
+        <td>${fmtID(r.tanggal_laporan)}</td>
+        <td>${r.jenis}</td>
+        <td>${r.anggota_penanda_tangan}</td>
+      </tr>
+    `).join('');
+            document.getElementById('tbody').innerHTML = html || '<tr><td colspan="5">Tidak ada data</td></tr>';
+        }
+
+        function renderChartWeekly(rows) {
+            const byWeek = new Map();
+            for (const r of rows) {
+                const d = new Date(r.tanggal_laporan);
+                if (isNaN(d)) continue;
+                const s = startOfWeek(d).toISOString().slice(0, 10);
+                byWeek.set(s, (byWeek.get(s) || 0) + 1);
+            }
+            const entries = [...byWeek.entries()].sort((a, b) => new Date(a[0]) - new Date(b[0]));
+            const labels = entries.map(([iso]) => labelWeekRange(new Date(iso)));
+            const values = entries.map(([, cnt]) => cnt);
+
+            if (CHART) CHART.destroy();
+            CHART = new Chart(document.getElementById('chartWeekly').getContext('2d'), {
+                type: 'line',
+                data: { labels, datasets: [{ label: 'Surat masuk / minggu', data: values, borderColor: '#fcb035', backgroundColor: '#fcb035', fill: false, tension: 0.3 }] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { color: '#fff' } },
+                        y: { beginAtZero: true, ticks: { color: '#fff' } }
+                    },
+                    plugins: { legend: { labels: { color: '#fcb035' } } }
+                }
+            });
+        }
+
+        document.getElementById('btnRefresh').addEventListener('click', bootstrap);
+        document.getElementById('q').addEventListener('input', () => renderTable(RAW_ROWS));
+
+        bootstrap();
+    </script>
+</body>
+
+</html>

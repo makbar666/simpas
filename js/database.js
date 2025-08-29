@@ -19,6 +19,17 @@ db.serialize(() => {
     password TEXT,
     akses TEXT
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS kehilangan (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    no_surat TEXT UNIQUE,
+    nama_pelapor TEXT,
+    tanggal_laporan TEXT,           
+    jenis TEXT,
+    anggota_penanda_tangan TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
+  )`);
+
 });
 
 // Handler tambah anggota dengan hash password
@@ -67,6 +78,39 @@ ipcMain.handle('get-users', async () => {
           akses: (r.akses || '').split(',').filter(Boolean),
         }));
         resolve(mapped);
+      }
+    );
+  });
+});
+
+
+// Simpan ringkas surat kehilangan
+ipcMain.handle('simpan-kehilangan', async (_evt, data) => {
+  // Data yang dipakai hanya 5 field ini
+  const { no_surat, nama_pelapor, tanggal_laporan, jenis, anggota_penanda_tangan } = data || {};
+  return new Promise((resolve, reject) => {
+    db.run(
+      `INSERT INTO kehilangan (no_surat, nama_pelapor, tanggal_laporan, jenis, anggota_penanda_tangan)
+       VALUES (?, ?, ?, ?, ?)`,
+      [no_surat, nama_pelapor, tanggal_laporan, jenis, anggota_penanda_tangan],
+      function (err) {
+        if (err) return reject(err.message);
+        resolve({ success: true, id: this.lastID });
+      }
+    );
+  });
+});
+
+// (Opsional) ambil daftar terakhir untuk debugging / list
+ipcMain.handle('get-kehilangan', async (_evt) => {
+  return new Promise((resolve, reject) => {
+    db.all(
+      `SELECT id, no_surat, nama_pelapor, tanggal_laporan, jenis, anggota_penanda_tangan
+       FROM kehilangan ORDER BY id DESC LIMIT 100`,
+      [],
+      (err, rows) => {
+        if (err) return reject(err.message);
+        resolve(rows || []);
       }
     );
   });
