@@ -173,7 +173,7 @@
         (users || []).forEach(u => {
           const opt = document.createElement('option');
           // Tampilkan ringkas: Nama — Pangkat (NRP)
-          opt.value = `${u.nama || ''}${u.pangkat ? ' — ' + u.pangkat : ''}${u.nrp ? ' (' + u.nrp + ')' : ''}`;
+          opt.value = `${u.nama || ''}${u.pangkat ? ' — ' + u.pangkat : ''}${u.jabatan ? ' — ' + u.jabatan : ''}${u.nrp ? ' (' + u.nrp + ')' : ''}`;
           // simpan data penting di data-*
           opt.dataset.userId = u.id ?? '';
           opt.dataset.nama = u.nama ?? '';

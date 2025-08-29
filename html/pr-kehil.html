@@ -348,7 +348,7 @@
         <table class="tanda-tangan">
           <tr>
             <td><br>Pelapor</td>
-            <td>Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan</td>
+            <td>Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan<br />[Jabatan]</td>
           </tr>
           <tr>
             <td style="padding-top: 60px;"><strong><u>[Nama Pelapor dari input pelapor]</u></strong></td>
@@ -411,12 +411,14 @@
       let petugasNama = pelapor.nama_petugas || '';
       let petugasPangkat = pelapor.pangkat || '';
       let petugasNrp = pelapor.nrp || '';
+      let petugasJabatan = pelapor.jabatan || '';
       if (ttdRaw) {
         try {
           const t = JSON.parse(ttdRaw);
           petugasNama = t.nama || petugasNama;
           petugasPangkat = t.pangkat || petugasPangkat;
           petugasNrp = t.nrp || petugasNrp;
+          petugasJabatan = t.jabatan || petugasJabatan;
         } catch (_) { }
       }
 
@@ -469,6 +471,7 @@
         .replace(/\[Nama\s*Petugas\]/g, petugasNama || '')
         .replace(/\[Pangkat\]/g, petugasPangkat || '')
         .replace(/\[NRP\]/g, petugasNrp || '')
+        .replace(/\[Jabatan\]/g, petugasJabatan || '')
         .replace(/\[jam saat surat ini dibuat\]/g, jamText);
 
       // ====== SUSUN PAYLOAD LENGKAP UNTUK QR ======
@@ -505,7 +508,7 @@
           label_nomor: labelNomor
         },
         petugas: { // ikut disimpan juga (versi verbose)
-          nama: petugasNama || '', pangkat: petugasPangkat || '', nrp: petugasNrp || ''
+          nama: petugasNama || '', pangkat: petugasPangkat || '', nrp: petugasNrp || '', jabatan: petugasJabatan || ''
         }
       };
 
@@ -529,7 +532,7 @@
           ln: labelNomor
         },
         m: { hr: hari, tg: tanggalText, jm: jamText, th: tahun, br: bulanRomawi, bt: bulanTeks },
-        t: { n: petugasNama || '', pk: petugasPangkat || '', nr: petugasNrp || '' } // <— PETUGAS
+        t: { n: petugasNama || '', pk: petugasPangkat || '', nr: petugasNrp || '', ja: petugasJabatan || '' } // <— PETUGAS
       };
 
       // KOMPRESI (deflateRaw) + base64url

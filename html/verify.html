@@ -360,7 +360,7 @@
 
                         <!-- kolom petugas -->
                         <td style="width:40%;">
-                            Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan
+                            Arahan, [tanggal bulan tahun surat dibuat]<br />Yang menerima laporan<br />[Jabatan]
                         </td>
                     </tr>
                     <tr>
@@ -458,7 +458,8 @@
                 petugas: {
                     nama: p.t?.n || '',
                     pangkat: p.t?.pk || '',
-                    nrp: p.t?.nr || ''
+                    nrp: p.t?.nr || '',
+                    jabatan: p.t?.ja || ''
                 }
 
             };
@@ -542,7 +543,8 @@
             let petugas = isNew ? (p.petugas || {}) : {
                 nama: p.nama_petugas,
                 pangkat: p.pangkat,
-                nrp: p.nrp
+                nrp: p.nrp,
+                jabatan: p.jabatan
             };
 
             // Fallback dari pilihan di form (localStorage)
@@ -552,7 +554,8 @@
                     petugas = {
                         nama: pick(petugas.nama, ttdLocal.nama),
                         pangkat: pick(petugas.pangkat, ttdLocal.pangkat),
-                        nrp: pick(petugas.nrp, ttdLocal.nrp)
+                        nrp: pick(petugas.nrp, ttdLocal.nrp),
+                        jabatan: pick(petugas.jabatan, ttdLocal.jabatan)
                     };
                 }
             } catch (_) { }
@@ -609,7 +612,8 @@
 
                 '\\[NRP\\]': val(pick(petugas.nrp, p.nrp)),
                 '\\[Pangkat\\]': val(pick(petugas.pangkat, p.pangkat)),
-                '\\[Nama\\s+Petugas\\]': val(pick(petugas.nama, p.nama_petugas))
+                '\\[Nama\\s+Petugas\\]': val(pick(petugas.nama, p.nama_petugas)),
+                '\\[Jabatan\\]': val(pick(petugas.jabatan, p.jabatan))
 
             };
 
