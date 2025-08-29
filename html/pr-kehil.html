@@ -158,7 +158,7 @@
 
     .tanda-tangan {
       width: 100%;
-      margin-top: 40px;
+      margin-top: 20px;
       font-size: 13px;
       text-align: center;
       border-collapse: collapse;
@@ -171,7 +171,7 @@
 
     .catatan {
       margin-top: 30px;
-      font-size: 12px;
+      font-size: 10px;
       font-style: italic;
       border-top: 1px dashed #000;
       padding-top: 8px;
@@ -197,13 +197,13 @@
     .footer {
       font-size: 12px;
       text-align: start;
-      margin-top: 120px;
+      margin-top: 20px;
       color: #000;
       font-style: italic;
     }
 
     .print-button {
-      position: fixed;
+
       bottom: 20px;
       right: 20px;
       background: #007bff;
@@ -223,6 +223,20 @@
       background: #0056b3;
     }
 
+    .kembali-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     @media print {
       .print-button {
         display: none;
@@ -232,7 +246,12 @@
 </head>
 
 <body>
-  <button class="print-button" onclick="window.print()">🖨 Print</button>
+  <div
+    style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center; gap: 12px; position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+    <button class="print-button" style="height: 44px;" onclick="window.print()">🖨 Print</button>
+    <button class="print-button" style="height: 44px;"
+      onclick="window.location.href='form-kehilangan.html'">Kembali</button>
+  </div>
 
   <div class="page">
     <div class="container" id="surat">

@@ -273,6 +273,25 @@
         window.location.href = 'pr-kehil.html';
       }
     };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const suratInput = document.getElementById('surat');
+      const nodokumenInput = document.getElementById('nodokumen');
+
+      suratInput.addEventListener('input', () => {
+        const jenis = suratInput.value.toLowerCase();
+        const pelapor = JSON.parse(localStorage.getItem('dataPelapor') || '{}');
+
+        // Jika jenis dokumen mengandung 'ktp' dan ada NIK di dataPelapor
+        if (jenis.includes('ktp') && pelapor.nik) {
+          nodokumenInput.value = pelapor.nik;
+        } else {
+          // biarkan kosong/manual kalau bukan KTP
+          nodokumenInput.value = '';
+        }
+      });
+    });
+
   </script>
 
 </body>
