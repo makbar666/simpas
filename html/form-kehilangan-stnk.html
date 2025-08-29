@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIPMAS POLSEK</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+
+<body>
+    <header>
+        <img src="../img/polri.png" alt="Logo" class="logo" />
+        <h1>SIPMAS POLSEK</h1>
+        <div class="lines"></div>
+    </header>
+
+    <main>
+        <h2>BERITA KEHILANGAN</h2>
+        <div class="data-pelapor-section">
+            <h4 class="main-header">MELAPORKAN KEHILANGAN TENTANG</h4>
+            <form class="form-grid">
+
+                <!-- Jenis Dokumen -->
+                <div>
+                    <label for="surat">Surat/Dokumen</label>
+                    <input type="text" id="surat" name="surat" placeholder="Masukkan Jenis Dokumen" list="dokumen" />
+                    <datalist id="dokumen">
+                        <!-- Daftar jenis dokumen -->
+                        <option value="Paspor" />
+                        <option value="Kartu Tanda Penduduk (KTP)" />
+                        <option value="Kartu Keluarga (KK)" />
+                        <option value="Akta Kelahiran" />
+                        <option value="Akta Kematian" />
+                        <option value="Buku Nikah Suami" />
+                        <option value="Buku Nikah Istri" />
+                        <option value="Buku Nikah Suami dan Istri" />
+                        <option value="Surat Cerai" />
+                        <option value="Surat Cerai Suami" />
+                        <option value="Surat Cerai Istri" />
+                        <option value="Surat Cerai Suami dan Istri" />
+                        <option value="Surat Izin Mengemudi A (SIM A)" />
+                        <option value="Surat Izin Mengemudi B 1 (SIM B I)" />
+                        <option value="Surat Izin Mengemudi B 2 (SIM B II)" />
+                        <option value="Surat Izin Mengemudi C (SIM C)" />
+                        <option value="Surat Izin Mengemudi D (SIM D)" />
+                        <option value="Ijazah Sekolah Dasar (SD)" />
+                        <option value="Ijazah Sekolah Menengah Pertama (SMP)" />
+                        <option value="Ijazah Sekolah Menengah Atas (SMA)" />
+                        <option value="Ijazah Sekolah Menengah Kejuruan (SMK)" />
+                        <option value="Surat Keterangan Lulus (SKL) Sekolah Dasar (SD)" />
+                        <option value="Surat Keterangan Lulus (SKL) Sekolah Menengah Pertama (SMP)" />
+                        <option value="Surat Keterangan Lulus (SKL) Sekolah Menengah Atas (SMA)" />
+                        <option value="Surat Keterangan Lulus (SKL) Sekolah Menengah Kejuruan (SMK)" />
+                        <option value="Buku Rekening Bank BRI" />
+                        <option value="Buku Rekening Bank BCA" />
+                        <option value="Buku Rekening Bank BNI" />
+                        <option value="Buku Rekening Bank Mandiri" />
+                        <option value="Buku Rekening Bank BTN" />
+                        <option value="Buku Rekening Bank BJB" />
+                        <option value="Buku Rekening Bank Maybank" />
+                        <option value="Buku Rekening Bank UOB" />
+                        <option value="Buku Rekening Bank HSBC" />
+                        <option value="Buku Rekening Bank BSI" />
+                        <option value="Buku Rekening Bank Muamalat" />
+                        <option value="Buku Rekening Bank Mega Syariah" />
+                        <option value="Buku Rekening Bank BCA Syariah" />
+                        <option value="Buku Rekening Bank BRI Syariah" />
+                        <option value="Buku Rekening Bank BNI Syariah" />
+                        <option value="Buku Rekening Bank Mandiri Syariah" />
+                        <option value="Kartu ATM Bank BRI" />
+                        <option value="Kartu ATM Bank BCA" />
+                        <option value="Kartu ATM Bank BNI" />
+                        <option value="Kartu ATM Bank Mandiri" />
+                        <option value="Kartu ATM Bank BTN" />
+                        <option value="Kartu ATM Bank BJB" />
+                        <option value="Kartu ATM Bank Maybank" />
+                        <option value="Kartu ATM Bank UOB" />
+                        <option value="Kartu ATM Bank HSBC" />
+                        <option value="Kartu ATM Bank BSI" />
+                        <option value="Kartu ATM Bank Muamalat" />
+                        <option value="Kartu ATM Bank Mega Syariah" />
+                        <option value="Kartu ATM Bank BCA Syariah" />
+                        <option value="Kartu ATM Bank BRI Syariah" />
+                        <option value="Kartu ATM Bank BNI Syariah" />
+                        <option value="Kartu ATM Bank Mandiri Syariah" />
+                    </datalist>
+                </div>
+
+                <!-- Nama Pemilik -->
+                <div>
+                    <label for="namapemilik">Nama Pemilik</label>
+                    <input type="text" id="namapemilik" name="namapemilik" placeholder="Masukkan nama pemilik dokumen"
+                        list="daftar-namapemilik" />
+                    <datalist id="daftar-namapemilik">
+                        <option value="Pelapor" />
+                    </datalist>
+                </div>
+
+                <!-- Nomor Dokumen -->
+                <div>
+                    <label for="nodokumen">Nomor Dokumen/Surat</label>
+                    <input type="text" id="nodokumen" name="nodokumen" placeholder="Masukkan nomor surat" />
+                </div>
+
+                <div>
+                    <label for="asaldokumen">Diterbitkan oleh</label>
+                    <input type="text" id="asaldokumen" name="asaldokumen" placeholder="Contoh: Bank BRI KCP Bangkir" />
+                </div>
+
+                <div>
+                    <label for="tanggalhilang">Perkiraan Tanggal Kehilangan</label>
+                    <input type="date" id="tanggalhilang" name="tanggalhilang"
+                        placeholder="Contoh: Bank BRI KCP Bangkir" />
+                </div>
+
+                <!-- Tempat Kehilangan -->
+                <div>
+                    <label for="tempathilang">Perkiraan Tempat Kehilangan</label>
+                    <input type="text" id="tempathilang" name="tempathilang" placeholder="Masukkan tempat hilang"
+                        list="daftar-tempathilang" />
+                    <datalist id="daftar-tempathilang">
+                        <option value="Rumah Pelapor" />
+                        <option value="Rumah Pemilik Surat/Dokumen" />
+                        <option value="Perjalanan" />
+                    </datalist>
+                </div>
+
+                <!-- Detail Perjalanan (muncul jika dipilih "Perjalanan") -->
+                <div id="form-perjalanan" style="display: none;">
+                    <label for="detailperjalanan">Detail Perjalanan</label>
+                    <input type="text" id="detailperjalanan" name="detailperjalanan"
+                        placeholder="Contoh: dari Kec. Arahan menuju Kec. Indramayu" />
+                </div>
+
+                <div>
+                    <label for="waktukehilangan">Perkiraan Waktu Kehilangan</label>
+                    <input type="text" id="waktukehilangan" name="waktukehilangan" placeholder="Contoh: 19.00">
+                </div>
+
+                <div>
+                    <label for="pilihttd">Pilih Anggota Penanda Tangan</label>
+                    <input type="text" id="pilihttd" name="pilihttd" placeholder="Silahkan Pilih" list="ttdanggota">
+                    <datalist id="ttdanggota"></datalist>
+
+                </div>
+
+            </form>
+
+            <h4 class="main-header">DATA KENDARAAN</h4>
+            <form class="form-grid">
+                <div>
+                    <label for="jenisKendaraan">Jenis Kendaraan</label>
+                    <input type="text" id="jenisKendaraan" name="jenisKendaraan"
+                        placeholder="Contoh: Sepeda Motor / Mobil">
+                </div>
+
+                <div>
+                    <label for="merek">Merek</label>
+                    <input type="text" id="merek" name="merek" placeholder="Contoh: Honda / Yamaha / Toyota">
+                </div>
+
+                <div>
+                    <label for="nopol">Nomor Polisi</label>
+                    <input type="text" id="nopol" name="nopol" placeholder="Contoh: B 1234 ABC">
+                </div>
+
+                <div>
+                    <label for="tipe">Type</label>
+                    <input type="text" id="tipe" name="tipe" placeholder="Contoh: Beat / Avanza">
+                </div>
+
+                <div>
+                    <label for="tahunPembuatan">Tahun Pembuatan</label>
+                    <input type="number" id="tahunPembuatan" name="tahunPembuatan" placeholder="2018">
+                </div>
+
+                <div>
+                    <label for="warna">Warna</label>
+                    <input type="text" id="warna" name="warna" placeholder="Contoh: Hitam / Merah">
+                </div>
+
+                <div>
+                    <label for="noRangka">Nomor Rangka</label>
+                    <input type="text" id="noRangka" name="noRangka" placeholder="Nomor rangka">
+                </div>
+
+                <div>
+                    <label for="noMesin">Nomor Mesin</label>
+                    <input type="text" id="noMesin" name="noMesin" placeholder="Nomor mesin">
+                </div>
+
+                <div>
+                    <label for="noBpkb">Nomor BPKB</label>
+                    <input type="text" id="noBpkb" name="noBpkb" placeholder="Nomor BPKB">
+                </div>
+
+                <div>
+                    <label for="namapemilik">Nama Pemilik</label>
+                    <input type="text" id="namapemilik" name="namapemilik" placeholder="Nama pemilik kendaraan">
+                </div>
+            </form>
+
+
+        </div>
+    </main>
+    <div class="actions-pelapor">
+        <button class="tambah" id="btnPrint">PRINT</button>
+    </div>
+    <div class="actions-kembali">
+        <button class="logout" onclick="window.location.href='input-pelapor.html'">KEMBALI</button>
+    </div>
+
+    <footer>
+        <p>SIPMAS POLSEK 1.0</p>
+    </footer>
+
+    <script>
+        // --- LOAD LIST ANGGOTA KE <datalist> ---
+        async function loadAnggotaTTD() {
+            const dl = document.getElementById('ttdanggota');
+            if (!dl) return;
+
+            dl.innerHTML = '';
+            try {
+                // Ambil dari IPC (pastikan preload expose: window.electronAPI.getUsers)
+                const users = await window.electronAPI.getUsers();
+
+                (users || []).forEach(u => {
+                    const opt = document.createElement('option');
+                    // Tampilkan ringkas: Nama — Pangkat (NRP)
+                    opt.value = `${u.nama || ''}${u.pangkat ? ' — ' + u.pangkat : ''}${u.jabatan ? ' — ' + u.jabatan : ''}${u.nrp ? ' (' + u.nrp + ')' : ''}`;
+                    // simpan data penting di data-*
+                    opt.dataset.userId = u.id ?? '';
+                    opt.dataset.nama = u.nama ?? '';
+                    opt.dataset.pangkat = u.pangkat ?? '';
+                    opt.dataset.jabatan = u.jabatan ?? '';
+                    opt.dataset.nrp = u.nrp ?? '';
+                    dl.appendChild(opt);
+                });
+            } catch (err) {
+                console.error('Gagal memuat anggota TTD:', err);
+                alert('Gagal memuat daftar anggota penanda tangan.');
+            }
+        }
+
+        // --- SIMPAN PILIHAN KE localStorage (agar dipakai halaman cetak) ---
+        const inputTTD = document.getElementById('pilihttd');
+        inputTTD.addEventListener('change', () => {
+            const val = inputTTD.value;
+            const opts = document.querySelectorAll('#ttdanggota option');
+            let found = null;
+            for (const o of opts) {
+                if (o.value === val) { found = o; break; }
+            }
+            if (found) {
+                const picked = {
+                    id: found.dataset.userId,
+                    nama: found.dataset.nama,
+                    pangkat: found.dataset.pangkat,
+                    jabatan: found.dataset.jabatan,
+                    nrp: found.dataset.nrp
+                };
+                localStorage.setItem('ttdAnggota', JSON.stringify(picked));
+            } else {
+                // Jika user mengetik bebas & tidak cocok dengan option
+                localStorage.removeItem('ttdAnggota');
+            }
+        });
+
+        // --- Panggil saat halaman siap ---
+        document.addEventListener('DOMContentLoaded', loadAnggotaTTD);
+
+        // --- Tambah ke handler PRINT yang sudah ada ---
+        // (Tinggal biarkan seperti semula; kita hanya tambahkan simpan ttdAnggota bila ada)
+        const oldBtnPrintHandler = document.getElementById('btnPrint').onclick;
+        document.getElementById('btnPrint').onclick = function () {
+            // simpan juga TTD kalau ada
+            const ttd = localStorage.getItem('ttdAnggota');
+            if (ttd) {
+                // sisipkan ke dataKehilanganStnk yang disimpan / atau biarkan sebagai key terpisah
+                // kita simpan terpisah agar halaman 'pr-kehil.html' fleksibel membacanya
+                localStorage.setItem('ttdAnggota', ttd);
+            }
+            // jalankan logic lama
+            if (typeof oldBtnPrintHandler === 'function') {
+                oldBtnPrintHandler();
+            } else {
+                // fallback ke handler default yang ada di file ini
+                const dataKehilanganStnk = {
+                    surat: document.getElementById('surat').value,
+                    namapemilik: document.getElementById('namapemilik').value,
+                    jenisKendaraan: document.getElementById('jenisKendaraan').value,
+                    nodokumen: document.getElementById('nodokumen').value,
+                    asaldokumen: document.getElementById('asaldokumen').value,
+                    tanggalhilang: document.getElementById('tanggalhilang').value,
+                    tempathilang: document.getElementById('tempathilang').value,
+                    detailperjalanan: document.getElementById('detailperjalanan').value,
+                    waktukehilangan: document.getElementById('waktukehilangan').value,
+                    merek: document.getElementById('merek').value,
+                    nopol: document.getElementById('nopol').value,
+                    tipe: document.getElementById('tipe').value,
+                    tahunPembuatan: document.getElementById('tahunPembuatan').value,
+                    warna: document.getElementById('warna').value,
+                    noRangka: document.getElementById('noRangka').value,
+                    noMesin: document.getElementById('noMesin').value,
+                    noBpkb: document.getElementById('noBpkb').value
+                };
+                localStorage.setItem('dataKehilanganStnk', JSON.stringify(dataKehilanganStnk));
+                localStorage.setItem('autoPrint', 'true');
+                window.location.href = 'pr-kehil-stnk.html';
+            }
+        };
+    </script>
+
+</body>
+
+</html>

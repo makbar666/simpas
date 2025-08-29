@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Verifikasi Surat Kehilangan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+    <style>
+        @page {
+            size: 210mm 330mm;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: "Tahoma", sans-serif;
+            font-size: 13px;
+            margin: 0;
+            padding: 20px;
+            background: #ccc;
+        }
+
+        .page {
+            background: white;
+            width: 215mm;
+            min-height: 330mm;
+            margin: auto;
+            padding: 10mm 20mm 20mm 20mm;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+            box-sizing: border-box;
+        }
+
+        .kop-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .kop-surat {
+            text-align: center;
+        }
+
+        .kop-surat h3 {
+            margin: 0;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .kop-surat p {
+            margin: 2px 0;
+            border-bottom: 1px solid #000;
+            display: inline-block;
+        }
+
+        .kop-kanan td {
+            padding: 1px 4px;
+            font-size: 13px;
+        }
+
+        .imgpolri {
+            text-align: center;
+            margin: 20px 0 10px;
+        }
+
+        .imgpolri img {
+            width: 60px;
+            filter: grayscale(100%);
+            margin-bottom: 5px;
+        }
+
+        .judul-utama {
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+        }
+
+        .isi-surat {
+            text-align: justify;
+            margin-top: 20px;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+
+        .data-pelapor td {
+            padding: 2px 5px;
+        }
+
+        .tanda-tangan {
+            width: 100%;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .catatan {
+            margin-top: 30px;
+            font-size: 12px;
+            font-style: italic;
+            border-top: 1px dashed #000;
+            padding-top: 8px;
+        }
+
+        .footer {
+            font-size: 12px;
+            margin-top: 120px;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            .page {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="kop-wrapper">
+                <div class="kop-surat">
+                    <h3>POLRI DAERAH JAWA BARAT</h3>
+                    <h3>RESOR INDRAMAYU</h3>
+                    <h3>SEKTOR ARAHAN</h3>
+                    <p>Jl. Raya Arahan Lor, Arahan Indramayu - 45365</p>
+                </div>
+                <div class="kop-kanan">
+                    <table>
+                        <tr>
+                            <td>Model</td>
+                            <td>:</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Bulan</td>
+                            <td>:</td>
+                            <td><span id="v_bulan"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Tahun</td>
+                            <td>:</td>
+                            <td><span id="v_tahun"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="imgpolri">
+                <img src="../img/polri.png" alt="Logo Polri" />
+                <div class="judul-surat">
+                    <p class="judul-utama">SURAT TANDA PENERIMAAN LAPORAN KEHILANGAN BARANG/SURAT</p>
+                    <p id="v_nomorSurat"></p>
+                </div>
+            </div>
+
+            <div class="isi-surat">
+                <p>
+                    Yang bertanda tangan di bawah ini, telah datang ke Kantor Kepolisian Sektor Arahan
+                    pada hari <span id="v_hari"></span>,
+                    tanggal <span id="v_tanggal"></span> pukul <span id="v_jam"></span> WIB
+                    seseorang yang mengaku bernama :
+                </p>
+
+                <table class="data-pelapor">
+                    <tr>
+                        <td>Nama</td>
+                        <td>:</td>
+                        <td><strong id="v_nama"></strong></td>
+                    </tr>
+                    <tr>
+                        <td>Tempat, Tanggal Lahir</td>
+                        <td>:</td>
+                        <td id="v_ttlp"></td>
+                    </tr>
+                    <tr>
+                        <td>Agama</td>
+                        <td>:</td>
+                        <td id="v_agama"></td>
+                    </tr>
+                    <tr>
+                        <td>Pekerjaan</td>
+                        <td>:</td>
+                        <td id="v_pekerjaan"></td>
+                    </tr>
+                    <tr>
+                        <td>Alamat</td>
+                        <td>:</td>
+                        <td><span id="v_alamat1"></span><br><span id="v_alamat2"></span></td>
+                    </tr>
+                    <tr>
+                        <td>NIK</td>
+                        <td>:</td>
+                        <td id="v_nik"></td>
+                    </tr>
+                </table>
+
+                <!-- di dalam .isi-surat -->
+                <p>Melaporkan tentang kehilangan barang atau surat-surat penting berupa:</p>
+
+                <!-- BLOK STNK -->
+                <div id="blk-stnk" style="margin:6px 0 10px; margin-left:20px;">
+                    <div>- 1 (satu) buah Surat Tanda Nomor Kendaraan Bermotor (STNK) <span id="v_jenisKendaraan"></span>
+                    </div>
+
+                    <table style="border-collapse:collapse; font-size:13px; margin-top:4px;">
+                        <tr>
+                            <td style="padding:1px 6px 1px 0;">Merek</td>
+                            <td style="padding:1px 20px;">:</td>
+                            <td id="v_merek"></td>
+                        </tr>
+                        <tr>
+                            <td>Nomor Polisi</td>
+                            <td>:</td>
+                            <td id="v_nopol"></td>
+                        </tr>
+                        <tr>
+                            <td>Type</td>
+                            <td>:</td>
+                            <td id="v_tipe"></td>
+                        </tr>
+                        <tr>
+                            <td>Tahun Pembuatan</td>
+                            <td>:</td>
+                            <td id="v_tahun"></td>
+                        </tr>
+                        <tr>
+                            <td>Warna</td>
+                            <td>:</td>
+                            <td id="v_warna"></td>
+                        </tr>
+                        <tr>
+                            <td>Nomor Rangka</td>
+                            <td>:</td>
+                            <td id="v_rangka"></td>
+                        </tr>
+                        <tr>
+                            <td>Nomor Mesin</td>
+                            <td>:</td>
+                            <td id="v_mesin"></td>
+                        </tr>
+                        <tr>
+                            <td>Nomor BPKB</td>
+                            <td>:</td>
+                            <td id="v_bpkb"></td>
+                        </tr>
+                        <tr>
+                            <td>Nama Pemilik</td>
+                            <td>:</td>
+                            <td id="v_namapemilik"></td>
+                        </tr>
+                    </table>
+                    <div id="v_asal" style="margin-top:6px;">Yang dikeluarkan dari …</div>
+                </div>
+
+
+                <p>
+                    Diketahui hilang pada hari <span id="v_hariHilang"></span>,
+                    pukul <span id="v_jamHilang"></span> WIB,
+                    di <span id="v_tempatHilang"></span>.
+                </p>
+
+                <p>
+                    Sesuai laporan Polisi Nomor:
+                    <strong><u id="v_nomorSurat2"></u></strong>
+                    pada tanggal <span id="v_tanggal2"></span>.
+                </p>
+
+                <table class="tanda-tangan">
+                    <tr>
+                        <td>Pelapor</td>
+                        <td>Arahan, <span id="v_tanggalTTD"></span><br />Yang menerima laporan<br /><span
+                                id="v_jabatan"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:60px;"><strong><u id="v_namaTTD"></u></strong></td>
+                        <td style="padding-top:60px;">
+                            <div style="border-bottom:1px solid #000; display:inline-block;">
+                                <strong id="v_namaPetugas"></strong>
+                            </div><br />
+                            <span id="v_pangkat"></span> NRP <span id="v_nrp"></span>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="catatan">
+                    <strong>Catatan:</strong> Surat ini bukan pengganti dokumen asli, berlaku 14 hari sejak diterbitkan.
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Dokumen/Surat ini Resmi. Cek Legalitas dengan Memindai QR Code.
+            <canvas id="qrCode" style="width:60px;height:60px;"></canvas>
+        </div>
+    </div>
+
+    <script>
+        function base64UrlToU8(b64u) {
+            const b64 = (b64u || '').replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil((b64u || '').length / 4) * 4, '=');
+            const bin = atob(b64); const u8 = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++)u8[i] = bin.charCodeAt(i);
+            return u8;
+        }
+        function expandV2(p) {
+            if (!p || p.v !== 2) return p;
+            return {
+                pelapor: { nama: p.p?.n, ttlp: p.p?.t, agama: p.p?.ag, pekerjaan: p.p?.pk, alamat1: p.p?.a1, alamat2: p.p?.a2, nik: p.p?.k, nosurat: p.p?.ns },
+                kehilangan: {
+                    surat: p.k?.s, namapemilik: p.k?.np, nodokumen: p.k?.nd, asaldokumen: p.k?.ad, tempathilang: p.k?.th,
+                    detailperjalanan: p.k?.dp, tanggalhilang_iso: p.k?.ti, waktukehilangan: p.k?.wk
+                },
+                petugas: { nama: p.t?.n, pangkat: p.t?.pk, nrp: p.t?.nr, jabatan: p.t?.ja },
+                surat: { nomor_full: p.s?.nf }, meta: { hari: p.m?.hr, tanggal_teks: p.m?.tg, jam_teks: p.m?.jm, tahun: p.m?.th, bulan_romawi: p.m?.br, bulan_teks: p.m?.bt }
+            };
+        }
+        function render(p) {
+            const pel = p.pelapor || {}; const h = p.kehilangan || {}; const pt = p.petugas || {}; const s = p.surat || {};
+            const now = new Date(); const hari = now.toLocaleDateString('id-ID', { weekday: 'long' });
+            const tgl = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const jam = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const tahun = now.getFullYear(); const romawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][now.getMonth()];
+            const bulan = now.toLocaleDateString('id-ID', { month: 'long' });
+
+            v_bulan.textContent = bulan; v_tahun.textContent = tahun;
+            v_nomorSurat.textContent = `Nomor : STPLKB / C / ${pel.nosurat || ''} / ${romawi} / ${tahun} / POLSEK / SPKT`;
+            v_hari.textContent = hari; v_tanggal.textContent = tgl; v_jam.textContent = jam;
+            v_nama.textContent = pel.nama || ''; v_ttlp.textContent = pel.ttlp || ''; v_agama.textContent = pel.agama || '';
+            v_pekerjaan.textContent = pel.pekerjaan || ''; v_alamat1.textContent = pel.alamat1 || ''; v_alamat2.textContent = pel.alamat2 || ''; v_nik.textContent = pel.nik || '';
+            v_jenisDok.textContent = h.surat || ''; v_namaPemilik.textContent = h.namapemilik || ''; v_nomorDok.textContent = h.nodokumen || ''; v_asalDok.textContent = h.asaldokumen || '';
+            v_hariHilang.textContent = h.tanggalhilang_iso ? new Date(h.tanggalhilang_iso).toLocaleDateString('id-ID', { weekday: 'long' }) : '';
+            v_jamHilang.textContent = h.waktukehilangan || ''; v_tempatHilang.textContent = h.tempathilang || '';
+            v_nomorSurat2.textContent = s.nomor_full || ''; v_tanggal2.textContent = tgl;
+            v_tanggalTTD.textContent = tgl; v_namaTTD.textContent = pel.nama || '';
+            v_jabatan.textContent = pt.jabatan || ''; v_namaPetugas.textContent = pt.nama || ''; v_pangkat.textContent = pt.pangkat || ''; v_nrp.textContent = pt.nrp || '';
+
+            // QR ulang
+            const qrCanvas = document.getElementById('qrCode');
+            const verifyUrl = window.location.href;
+            new QRious({ element: qrCanvas, value: verifyUrl, size: 100 });
+        }
+        window.onload = function () {
+            const url = new URLSearchParams(location.search);
+            const data = url.get('data'); const codec = url.get('codec');
+            if (codec === 'gz' && data) { const txt = new TextDecoder().decode(pako.inflateRaw(base64UrlToU8(data))); render(expandV2(JSON.parse(txt))); }
+
+            // ====== ISI DATA KEHILANGAN (STNK) ======
+            const h = p.kehilangan || {};
+            document.getElementById('v_jenisKendaraan').textContent = h.jenisKendaraan || '';
+            document.getElementById('v_merek').textContent = h.merek || '';
+            document.getElementById('v_nopol').textContent = h.nopol || '';
+            document.getElementById('v_tipe').textContent = h.tipe || '';
+            document.getElementById('v_tahun').textContent = h.tahunPembuatan || h.tahun || '';
+            document.getElementById('v_warna').textContent = h.warna || '';
+            document.getElementById('v_rangka').textContent = h.noRangka || '';
+            document.getElementById('v_mesin').textContent = h.noMesin || '';
+            document.getElementById('v_bpkb').textContent = h.noBpkb || '';
+            document.getElementById('v_namapemilik').textContent = h.namapemilik || '';
+            document.getElementById('v_asal').textContent = h.asaldokumen ? `Yang dikeluarkan dari ${h.asaldokumen}` : '';
+
+        };
+    </script>
+</body>
+
+</html>
