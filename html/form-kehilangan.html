@@ -126,12 +126,18 @@
           </datalist>
         </div>
 
-        <!-- Detail Perjalanan (muncul jika dipilih "Perjalanan") -->
         <div id="form-perjalanan" style="display: none;">
           <label for="detailperjalanan">Detail Perjalanan</label>
           <input type="text" id="detailperjalanan" name="detailperjalanan"
             placeholder="Contoh: dari Kec. Arahan menuju Kec. Indramayu" />
         </div>
+
+        <!-- Detail Perjalanan (muncul jika dipilih "Perjalanan") -->
+        <!-- <div id="form-perjalanan" style="display: none;">
+          <label for="detailperjalanan">Detail Perjalanan</label>
+          <input type="text" id="detailperjalanan" name="detailperjalanan"
+            placeholder="Contoh: dari Kec. Arahan menuju Kec. Indramayu" />
+        </div> -->
 
         <div>
           <label for="waktukehilangan">Perkiraan Waktu Kehilangan</label>
@@ -290,6 +296,25 @@
           nodokumenInput.value = '';
         }
       });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const tempatInput = document.getElementById('tempathilang');
+      const detailDiv = document.getElementById('form-perjalanan');
+
+      function toggleDetail() {
+        if ((tempatInput.value || '').toLowerCase() === 'perjalanan') {
+          detailDiv.style.display = 'block';
+        } else {
+          detailDiv.style.display = 'none';
+          document.getElementById('detailperjalanan').value = ''; // kosongkan bila disembunyikan
+        }
+      }
+
+      // pertama kali load
+      toggleDetail();
+      // saat user pilih/ketik
+      tempatInput.addEventListener('input', toggleDetail);
     });
 
   </script>
